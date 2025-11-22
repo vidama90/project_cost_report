@@ -272,12 +272,22 @@ sap.ui.define([
 
         grandTotal = this.convertToSAPCurrFormat(grandTotal);
         if (colName === 'ForecastFinalMargin_F') {
+          var totalMargin = 0;
+          var totalValue = 0;
+          Table.getItems().forEach((row) => {
+            var oData = row.getBindingContext().getObject();
+            var margin = this.getNumber(oData.ForecastFinalMargin);
+            var val = this.getNumber(oData.ForecastFinalValue);
+            totalMargin += margin;
+            totalValue += val;
+          });
+          var totalMarginPercent = (totalValue !== 0) ? (totalMargin / totalValue) * 100 : 0;
           col.setFooter(
             new sap.m.HBox({
               justifyContent: "End",
               items: [
                 new sap.m.Text({
-                  text: (grandTotal / count).toFixed(2) + "%",
+                  text: totalMarginPercent.toFixed(2) + "%",
                   textAlign: "End"
                 })
               ]
@@ -1212,14 +1222,9 @@ sap.ui.define([
         oModel.setProperty(cxt.getPath() + '/ForecastFinalMargin',
           this.convertToSAPCurrFormat(ForecastFinalMargin));
 
-        let rawPct = (ForecastFinalCost / ForecastFinalValue) * 100;
-        if (isNaN(rawPct)) {
-          rawPct = 0;
-        }
-        rawPct = Math.round(rawPct * 100) / 100; // Round to 2 decimal places
-
-        var ForecastFinalMargin_F = (ForecastFinalValue !== 0)
-          ? (ForecastFinalMargin / ForecastFinalValue) * 100
+        // Forecast Final Margin % = Forecast Final Margin / Forecast Final Value * 100
+        var ForecastFinalMargin_F = (parseFloat(ForecastFinalValue) !== 0)
+          ? (parseFloat(ForecastFinalMargin) / parseFloat(ForecastFinalValue)) * 100
           : 0;
         // if (isNaN(ForecastFinalMargin_F))
         //   ForecastFinalMargin_F = '0';
@@ -1362,7 +1367,7 @@ sap.ui.define([
         oModel.setProperty(oContext.getPath() + '/CostToComplete',
           this.convertToSAPCurrFormat(oCost.CostToComplete));
         var Variance = this.getNumber(oCost.RevisedBudget) - this.getNumber(oCost.ProjectedFinalCost);
-        var ProjectedFinalCost = this.getNumber(oCost.ActualCostPO) + this.getNumber(oCost.ActualCostSO) + this.getNumber(oCost.CostToComplete);
+        var ProjectedFinalCost = this.getNumber(oCost.ActualCostPO) + this.getNumber(oCost.ActualCostSO) + this.getNumber(oCost.CommitedCostPO) + this.getNumber(oCost.CostToComplete);
 
 
         oModel.setProperty(oContext.getPath() + '/ProjectedFinalCost',
@@ -1392,8 +1397,7 @@ sap.ui.define([
         }
 
 
-        var ProjectedFinalCost = this.getNumber(oCost.ActualCostPO) + this.getNumber(oCost.ActualCostSO)
-          - this.getNumber(oCost.UnderCost) + this.getNumber(oCost.OverCost);
+        var ProjectedFinalCost = this.getNumber(oCost.ActualCostPO) + this.getNumber(oCost.ActualCostSO) + this.getNumber(oCost.CommitedCostPO) + this.getNumber(oCost.CostToComplete);
 
         oModel.setProperty(oContext.getPath() + '/ProjectedFinalCost',
           this.convertToSAPCurrFormat(ProjectedFinalCost));

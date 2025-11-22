@@ -6,7 +6,7 @@
     <Dialog
         title="Cost Summary View"
         contentWidth="100%"
-        contentHeight="100%"
+        contentHeight="100%" 
         resizable="true"
         draggable="true"
         stretch="true"
