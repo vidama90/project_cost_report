@@ -1,0 +1,325 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    height="100%"
+    width="100%"
+>
+    <VBox>
+        <Toolbar>
+            <ToolbarSpacer />
+            <Button
+                icon="sap-icon://personnel-view"
+                press=".onHITablePersonalizePress"
+                tooltip="Personalize Table"
+            />
+        </Toolbar>
+        <ScrollContainer
+            height="100%"
+            width="100%"
+        >
+            <Table
+                id="HeaderItemTable"
+                fixedLayout="Strict"
+                enableBusyIndicator="false"
+                items="{
+                    path: 'to_HeaderItem',
+                    parameters: {
+                        groupId: 'costChanges'
+                    }
+                }"
+                updateFinished=".onUpdateFinished"
+                xmlns:core="sap.ui.core"
+                core:require="{CurrencyType: 'sap/ui/model/type/Currency'}"
+            >
+                <!-- Add this to your table's headerToolbar -->
+                <headerToolbar />
+                <columns>
+                    <!-- <Column>
+                <Label
+                    text="{/#ProjCostValuationDataType/ReportNumber/@sap:label}"
+                />
+            </Column> -->
+                    <Column
+                        id="HeaderItemTableColumnWBSElement"
+                        width="150px"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/WBSElement/@sap:label}"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnProjectType"
+                        width="150px"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/ProjectType/@sap:label}"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnCumulCertifToDate"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/CumulCertifToDate/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnCumulInternalValue"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/CumulInternalValue/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnWorkInProgress"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/WorkInProgress/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnForecastFinalValue"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/ForecastFinalValue/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnForecastFinalCost"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/ForecastFinalCost/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnForecastFinalMargin"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/ForecastFinalMargin/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnForecastFinalMargin_F"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/ForecastFinalMargin_F/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnCumulValueToDate"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/CumulValueToDate/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnPreviousMonthValue"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/PreviousMonthValue/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnCurrentMonthValue"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/CurrentMonthValue/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnCumulMarginToDate"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/CumulMarginToDate/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnPreviousMargin"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/PreviousMargin/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnCurrentMonthMargin"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/CurrentMonthMargin/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="HeaderItemTableColumnFinishingFund"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostHeaderItemDataType/FinishingFund/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <!-- <Text
+                        
+                        text="{ReportNumber}"
+                    /> -->
+                            <Text text="{WBSDescription}" />
+                            <Text text="{ProjectType}" />
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['CumulCertifToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['CumulInternalValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['WorkInProgress', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['ForecastFinalValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                                />
+                                <Input
+                                    value="{ parts: ['ForecastFinalValue', 'TransactionCurrency'], 
+                            type: 'CurrencyType', 
+                            formatOptions: {showMeasure: false}}"
+                                    change=".onCurrencyInputChange"
+                                    editable="{ViewControl>/Mode/IsEditable}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['ForecastFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['ForecastFinalMargin', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ForecastFinalMargin_F}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                                <Text
+                                    text="%"
+                                    class="amount-field"
+                                    textAlign="Start"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['CumulValueToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['PreviousMonthValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['CurrentMonthValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['CumulMarginToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['PreviousMargin', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['CurrentMonthMargin', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                />
+                            </HBox>
+                            <HBox justifyContent="End">
+                                <Text
+                                    text="{ parts: ['FinishingFund', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                                />
+                                <Input
+                                    value="{ parts: ['FinishingFund', 'TransactionCurrency'], 
+                            type: 'CurrencyType', 
+                            formatOptions: {showMeasure: false}}"
+                                    change=".onCurrencyInputChange"
+                                    editable="{ViewControl>/Mode/IsEditable}"
+                                    class="amount-field"
+                                    textAlign="End"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </ScrollContainer>
+    </VBox>
+</core:FragmentDefinition>

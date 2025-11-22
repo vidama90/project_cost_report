@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Specification Document - Project Cost Report Application</title>
+    <style>
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #0070C0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #0070C0;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header h2 {
+            color: #666;
+            font-size: 18px;
+            font-weight: normal;
+            margin-top: 0;
+        }
+        
+        .toc {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+        
+        .toc h3 {
+            color: #0070C0;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        h1 {
+            color: #0070C0;
+            font-size: 24px;
+            border-bottom: 2px solid #0070C0;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            page-break-before: always;
+        }
+        
+        h2 {
+            color: #0070C0;
+            font-size: 20px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        h3 {
+            color: #333;
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        
+        h4 {
+            color: #555;
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        th {
+            background-color: #0070C0;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .code-block {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11px;
+            overflow-x: auto;
+        }
+        
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #0070C0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .section-break {
+            page-break-before: always;
+        }
+        
+        .architecture-diagram {
+            text-align: center;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        
+        @media print {
+            body {
+                margin: 20px;
+            }
+            
+            .header {
+                page-break-after: avoid;
+            }
+            
+            h1 {
+                page-break-before: always;
+            }
+            
+            h1:first-of-type {
+                page-break-before: avoid;
+            }
+            
+            table {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Technical Specification Document</h1>
+    <h2>Project Cost Report Application (Post-Finance Revenue)</h2>
+    <p><strong>Version:</strong> 1.0 | <strong>Date:</strong> August 19, 2025</p>
+</div>
+
+<div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+        <li><a href="#project-overview">Project Overview</a></li>
+        <li><a href="#system-architecture">System Architecture</a></li>
+        <li><a href="#technical-stack">Technical Stack</a></li>
+        <li><a href="#application-structure">Application Structure</a></li>
+        <li><a href="#data-model">Data Model & OData Services</a></li>
+        <li><a href="#user-interface">User Interface Components</a></li>
+        <li><a href="#business-logic">Business Logic & Functionality</a></li>
+        <li><a href="#security">Security & Authorization</a></li>
+        <li><a href="#performance">Performance Optimization</a></li>
+        <li><a href="#configuration">Configuration & Deployment</a></li>
+        <li><a href="#testing">Testing Strategy</a></li>
+        <li><a href="#maintenance">Maintenance & Support</a></li>
+    </ol>
+</div>
+
+<h1 id="project-overview">1. Project Overview</h1>
+
+<h2>1.1 Application Purpose</h2>
+<p>The Project Cost Report Application is a comprehensive SAP Fiori application designed for managing and reporting project costs in construction and engineering projects. It provides functionality for creating, editing, displaying, and analyzing project cost reports with detailed financial breakdowns.</p>
+
+<h2>1.2 Key Features</h2>
+<ul>
+    <li><strong>Project Cost Reporting:</strong> Create and manage detailed project cost reports</li>
+    <li><strong>Multi-mode Operations:</strong> Support for Create, Change, and Display modes</li>
+    <li><strong>Financial Calculations:</strong> Automated calculations for margins, valuations, and cost projections</li>
+    <li><strong>Authorization Management:</strong> Role-based access control for different operations</li>
+    <li><strong>Real-time Data:</strong> Integration with SAP backend for live project data</li>
+    <li><strong>Responsive Design:</strong> Optimized for desktop, tablet, and mobile devices</li>
+</ul>
+
+<h2>1.3 Business Domain</h2>
+<table>
+    <tr><th>Aspect</th><th>Details</th></tr>
+    <tr><td>Industry</td><td>Construction, Engineering, Project Management</td></tr>
+    <tr><td>Department</td><td>Finance, Project Management, Cost Control</td></tr>
+    <tr><td>Currency</td><td>AED (UAE Dirham) - configurable</td></tr>
+    <tr><td>Number Format</td><td>US format (decimals with dots, thousands with commas)</td></tr>
+</table>
+
+<h1 id="system-architecture">2. System Architecture</h1>
+
+<h2>2.1 Architecture Pattern</h2>
+<div class="architecture-diagram">
+    <pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   SAP Fiori     │    │   SAP Gateway   │    │   SAP ERP/S4    │
+│   Frontend      │◄──►│   OData Service │◄──►│   Backend       │
+│   (UI5 App)     │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+    </pre>
+</div>
+
+<h2>2.2 Technology Stack</h2>
+<ul>
+    <li><strong>Frontend:</strong> SAP UI5 (version 1.120.14)</li>
+    <li><strong>Backend:</strong> SAP ERP/S4HANA</li>
+    <li><strong>Integration:</strong> SAP Gateway OData v2 Services</li>
+    <li><strong>Deployment:</strong> SAP Fiori Launchpad</li>
+    <li><strong>Development:</strong> SAP Business Application Studio / VS Code</li>
+</ul>
+
+<h2>2.3 Network Architecture</h2>
+<table>
+    <tr><th>Component</th><th>Details</th></tr>
+    <tr><td>Service URL</td><td>https://vhltvds4ci.sap.atg.altayer.com:44300</td></tr>
+    <tr><td>OData Service</td><td>/sap/opu/odata/sap/Z_UI_PPM_PROJECTCOSTRPT_O2/</td></tr>
+    <tr><td>Protocol</td><td>HTTPS with SAP authentication</td></tr>
+</table>
+
+<h1 id="technical-stack">3. Technical Stack</h1>
+
+<h2>3.1 Frontend Technologies</h2>
+<table>
+    <tr><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+    <tr><td>SAP UI5</td><td>1.120.14</td><td>Core framework</td></tr>
+    <tr><td>JavaScript ES6+</td><td>-</td><td>Programming language</td></tr>
+    <tr><td>XML Views</td><td>-</td><td>UI declarative syntax</td></tr>
+    <tr><td>CSS3</td><td>-</td><td>Styling</td></tr>
+    <tr><td>JSON Models</td><td>-</td><td>Local data management</td></tr>
+</table>
+
+<h2>3.2 SAP Components</h2>
+<table>
+    <tr><th>Component</th><th>Usage</th></tr>
+    <tr><td>sap.m</td><td>Mobile-first controls</td></tr>
+    <tr><td>sap.ui.core</td><td>Core UI5 functionality</td></tr>
+    <tr><td>sap.uxap</td><td>Object Page Layout</td></tr>
+    <tr><td>Smart Controls</td><td>Data-bound intelligent controls</td></tr>
+</table>
+
+<h2>3.3 Development Tools</h2>
+<ul>
+    <li><strong>SAP Fiori Tools</strong> (App Generator v1.17.5)</li>
+    <li><strong>UI5 CLI</strong> (v3.0.0)</li>
+    <li><strong>Node.js</strong> (LTS version)</li>
+    <li><strong>Git</strong> (Version control)</li>
+</ul>
+
+<h1 id="application-structure">4. Application Structure</h1>
+
+<h2>4.1 Project Structure</h2>
+<div class="code-block">
+postfinrevenue/
+├── webapp/
+│   ├── controller/
+│   │   ├── App.controller.js           # Main application controller
+│   │   ├── AuthorizationHelper.js      # Authorization utilities
+│   │   ├── ProjectCostReport.controller.js
+│   │   ├── ReportCreate.controller.js
+│   │   ├── ReportChange.controller.js
+│   │   ├── ReportDisplay.controller.js
+│   │   ├── Selection.controller.js
+│   │   └── helper/
+│   │       └── TablePersonalizer.js
+│   ├── view/
+│   │   ├── App.view.xml
+│   │   ├── ProjectCostReport.view.xml
+│   │   ├── ReportCreate.view.xml
+│   │   ├── ReportChange.view.xml
+│   │   ├── ReportDisplay.view.xml
+│   │   └── fragments/
+│   │       ├── HeaderForm.fragment.xml
+│   │       ├── HeaderItemTable.fragment.xml
+│   │       ├── ValuationTable.fragment.xml
+│   │       ├── CostSummaryTable.fragment.xml
+│   │       ├── CostItemTable.fragment.xml
+│   │       ├── Selection.fragment.xml
+│   │       ├── TableSettingsDialog.fragment.xml
+│   │       └── SkeletonLoader.fragment.xml
+│   ├── model/
+│   │   └── models.js
+│   ├── css/
+│   │   └── style.css
+│   ├── i18n/
+│   │   └── i18n.properties
+│   ├── localService/
+│   ├── test/
+│   ├── Component.js
+│   ├── manifest.json
+│   └── index.html
+├── package.json
+├── ui5.yaml
+├── ui5-local.yaml
+├── ui5-mock.yaml
+└── README.md
+</div>
+
+<h2>4.2 MVC Architecture</h2>
+<ul>
+    <li><strong>Models:</strong> OData model for backend integration, JSON models for UI state</li>
+    <li><strong>Views:</strong> XML-based declarative views with fragments for reusability</li>
+    <li><strong>Controllers:</strong> JavaScript controllers handling business logic and user interactions</li>
+</ul>
+
+<h1 id="data-model">5. Data Model & OData Services</h1>
+
+<h2>5.1 Primary OData Service</h2>
+<table>
+    <tr><th>Property</th><th>Value</th></tr>
+    <tr><td>Service Name</td><td>Z_UI_PPM_PROJECTCOSTRPT_O2</td></tr>
+    <tr><td>Version</td><td>OData v2.0</td></tr>
+    <tr><td>Base URL</td><td>/sap/opu/odata/sap/Z_UI_PPM_PROJECTCOSTRPT_O2/</td></tr>
+</table>
+
+<h2>5.2 Key Entity Sets</h2>
+<table>
+    <tr><th>Entity Set</th><th>Purpose</th><th>Key Fields</th></tr>
+    <tr><td>ProjectCostRept</td><td>Main project cost report</td><td>ReportNumber, ProjectNumber</td></tr>
+    <tr><td>HeaderItem</td><td>Project header items</td><td>ReportNumber, WBSElement</td></tr>
+    <tr><td>Valuation</td><td>Project valuations</td><td>ReportNumber, WBSElement</td></tr>
+    <tr><td>CostDetail</td><td>Cost summary data</td><td>ReportNumber, WBSElement</td></tr>
+    <tr><td>CostItem</td><td>Detailed cost items</td><td>ReportNumber, Item</td></tr>
+    <tr><td>ActualCost</td><td>Actual PO/SO costs</td><td>ProjectNumber, WBSElement</td></tr>
+    <tr><td>ProjectCostSummaryData</td><td>Aggregated cost data</td><td>ProjectNumber, Date</td></tr>
+</table>
+
+<h2>5.3 Data Relationships</h2>
+<div class="code-block">
+ProjectCostRept (1:N) HeaderItem
+ProjectCostRept (1:N) Valuation  
+ProjectCostRept (1:N) CostDetail
+CostDetail (1:N) CostItem
+</div>
+
+<h2>5.4 Key Fields & Properties</h2>
+<ul>
+    <li><strong>ReportNumber:</strong> Unique identifier for cost reports</li>
+    <li><strong>ProjectNumber:</strong> External project identifier</li>
+    <li><strong>WBSElement:</strong> Work Breakdown Structure element</li>
+    <li><strong>TransactionCurrency:</strong> Currency code (default: AED)</li>
+    <li><strong>ReportStatus:</strong> Report status (1-5)</li>
+    <li><strong>ItemReport:</strong> Boolean flag for line item reports</li>
+    <li><strong>DelayInDays:</strong> Calculated delay between requested and revised completion dates</li>
+</ul>
+
+<h1 id="user-interface">6. User Interface Components</h1>
+
+<h2>6.1 Application Views</h2>
+<table>
+    <tr><th>View</th><th>Purpose</th><th>Navigation</th></tr>
+    <tr><td>ProjectCostReport.view.xml</td><td>Landing page with selection screen</td><td>Entry point</td></tr>
+    <tr><td>ReportCreate.view.xml</td><td>Create new cost reports</td><td>From selection</td></tr>
+    <tr><td>ReportChange.view.xml</td><td>Edit existing reports</td><td>From display/selection</td></tr>
+    <tr><td>ReportDisplay.view.xml</td><td>Read-only report view</td><td>From selection</td></tr>
+    <tr><td>App.view.xml</td><td>Root application view</td><td>Shell container</td></tr>
+</table>
+
+<h2>6.2 UI Fragments (Reusable Components)</h2>
+<table>
+    <tr><th>Fragment</th><th>Purpose</th><th>Used In</th></tr>
+    <tr><td>HeaderForm.fragment.xml</td><td>Project header information form</td><td>All report views</td></tr>
+    <tr><td>HeaderItemTable.fragment.xml</td><td>Project items table</td><td>All report views</td></tr>
+    <tr><td>ValuationTable.fragment.xml</td><td>Valuation data table</td><td>All report views</td></tr>
+    <tr><td>CostSummaryTable.fragment.xml</td><td>Cost summary view</td><td>Summary reports</td></tr>
+    <tr><td>CostItemTable.fragment.xml</td><td>Detailed cost items</td><td>Line item reports</td></tr>
+    <tr><td>Selection.fragment.xml</td><td>Project selection screen</td><td>Landing page</td></tr>
+    <tr><td>SkeletonLoader.fragment.xml</td><td>Loading placeholder</td><td>All views</td></tr>
+</table>
+
+<h2>6.3 UI Control Usage</h2>
+<ul>
+    <li><strong>Smart Forms:</strong> Data-bound forms with automatic field generation</li>
+    <li><strong>Smart Tables:</strong> Intelligent tables with sorting, filtering, personalization</li>
+    <li><strong>Object Page Layout:</strong> Structured layout with sections and subsections</li>
+    <li><strong>Input Controls:</strong> Various input types with validation</li>
+    <li><strong>HBox/VBox:</strong> Flexible layout containers</li>
+</ul>
+
+<h2>6.4 Responsive Design</h2>
+<ul>
+    <li><strong>Device Support:</strong> Desktop, tablet, phone</li>
+    <li><strong>Content Density:</strong> Compact and cozy modes</li>
+    <li><strong>Adaptive Layout:</strong> UI5's responsive grid system</li>
+</ul>
+
+<h1 id="business-logic">7. Business Logic & Functionality</h1>
+
+<h2>7.1 Core Operations</h2>
+
+<h3>7.1.1 Report Creation</h3>
+<ul>
+    <li><strong>Authorization Check:</strong> Verify user permissions</li>
+    <li><strong>Data Validation:</strong> Validate all input fields</li>
+    <li><strong>Payload Generation:</strong> Create OData-compliant payload</li>
+    <li><strong>Sequential Numbering:</strong> Auto-generate next report number</li>
+    <li><strong>Batch Operations:</strong> Create header and related entities</li>
+</ul>
+
+<h3>7.1.2 Report Modification</h3>
+<ul>
+    <li><strong>Change Detection:</strong> Track modified fields</li>
+    <li><strong>Validation:</strong> Ensure data integrity</li>
+    <li><strong>Batch Updates:</strong> Submit all changes atomically</li>
+    <li><strong>Calculation Updates:</strong> Recalculate dependent fields</li>
+</ul>
+
+<h3>7.1.3 Financial Calculations</h3>
+<div class="highlight-box">
+    <strong>Automatic Calculations:</strong>
+    <ul>
+        <li>Forecast Final Margin = Forecast Final Value - Forecast Final Cost</li>
+        <li>Margin Percentage = (Forecast Final Cost / Forecast Final Value) × 100</li>
+        <li>Work in Progress = Cumulative Internal Valuation - Cumulative Certified to Date</li>
+        <li>Current Month Values = Cumulative - Previous Month</li>
+        <li>Variance = Revised Budget - Projected Final Cost</li>
+    </ul>
+</div>
+
+<h2>7.2 Data Flow</h2>
+<div class="code-block">
+User Input → Validation → Model Update → Calculation → Backend Sync → UI Refresh
+</div>
+
+<h2>7.3 State Management</h2>
+<ul>
+    <li><strong>View Control Model:</strong> Manages UI state and field visibility</li>
+    <li><strong>Mode States:</strong> Create, Change, Display modes</li>
+    <li><strong>Section Visibility:</strong> Controls which sections are shown</li>
+    <li><strong>Field Editability:</strong> Dynamic field enable/disable</li>
+</ul>
+
+<h2>7.4 Error Handling</h2>
+<ul>
+    <li><strong>Input Validation:</strong> Real-time field validation</li>
+    <li><strong>OData Error Processing:</strong> Structured error message extraction</li>
+    <li><strong>User Feedback:</strong> MessageBox dialogs for errors/success</li>
+    <li><strong>Fallback Mechanisms:</strong> Graceful degradation for failures</li>
+</ul>
+
+<h1 id="security">8. Security & Authorization</h1>
+
+<h2>8.1 Authorization Framework</h2>
+<table>
+    <tr><th>Component</th><th>Details</th></tr>
+    <tr><td>Module</td><td>AuthorizationHelper.js</td></tr>
+    <tr><td>Authorization Code 01</td><td>Create operations</td></tr>
+    <tr><td>Authorization Code 02</td><td>Change operations</td></tr>
+    <tr><td>Authorization Code 03</td><td>Display operations</td></tr>
+</table>
+
+<h2>8.2 Security Features</h2>
+<ul>
+    <li><strong>Role-Based Access:</strong> Function-specific authorization checks</li>
+    <li><strong>SAP Authentication:</strong> Integration with SAP user management</li>
+    <li><strong>HTTPS Communication:</strong> Encrypted data transmission</li>
+    <li><strong>Input Sanitization:</strong> Protection against injection attacks</li>
+</ul>
+
+<h2>8.3 Authorization Flow</h2>
+<div class="code-block">
+User Action → Authorization Check → Operation Allowed/Denied → Error Handling
+</div>
+
+<h2>8.4 Error Handling for Unauthorized Access</h2>
+<ul>
+    <li>Redirect to error page with specific error codes</li>
+    <li>User-friendly error messages</li>
+    <li>Proper cleanup of application state</li>
+</ul>
+
+<h1 id="performance">9. Performance Optimization</h1>
+
+<h2>9.1 Loading Optimization</h2>
+<ul>
+    <li><strong>Skeleton Screens:</strong> Visual feedback during data loading</li>
+    <li><strong>Progressive Loading:</strong> Load components as needed</li>
+    <li><strong>Busy Indicators:</strong> User feedback for long operations</li>
+    <li><strong>Lazy Loading:</strong> Load data only when required</li>
+</ul>
+
+<h2>9.2 Data Optimization</h2>
+<ul>
+    <li><strong>Batch Requests:</strong> Minimize server round trips</li>
+    <li><strong>Selective Loading:</strong> Load only required fields</li>
+    <li><strong>Caching:</strong> Model-level caching for static data</li>
+    <li><strong>Pagination:</strong> Handle large datasets efficiently</li>
+</ul>
+
+<h2>9.3 UI Optimization</h2>
+<ul>
+    <li><strong>Fragment Reuse:</strong> Minimize memory footprint</li>
+    <li><strong>Event Delegation:</strong> Efficient event handling</li>
+    <li><strong>DOM Optimization:</strong> Minimize DOM manipulations</li>
+    <li><strong>CSS Optimization:</strong> Efficient styling</li>
+</ul>
+
+<h2>9.4 Memory Management</h2>
+<ul>
+    <li><strong>Model Cleanup:</strong> Proper model disposal</li>
+    <li><strong>Event Cleanup:</strong> Remove event listeners</li>
+    <li><strong>Object Disposal:</strong> Clean up unused objects</li>
+</ul>
+
+<h1 id="configuration">10. Configuration & Deployment</h1>
+
+<h2>10.1 Build Configuration</h2>
+<div class="code-block">
+# ui5.yaml
+framework:
+  name: OpenUI5
+  version: "1.120.14"
+  libraries:
+    - name: sap.m
+    - name: sap.ui.core
+    - name: sap.uxap
+</div>
+
+<h2>10.2 Environment Configuration</h2>
+<table>
+    <tr><th>Environment</th><th>Purpose</th></tr>
+    <tr><td>Development</td><td>Local mock server with test data</td></tr>
+    <tr><td>Quality</td><td>Integration testing environment</td></tr>
+    <tr><td>Production</td><td>Live SAP system integration</td></tr>
+</table>
+
+<h2>10.3 Deployment Process</h2>
+<ol>
+    <li><strong>Build:</strong> npm run build</li>
+    <li><strong>Package:</strong> Create deployment archive</li>
+    <li><strong>Deploy:</strong> SAP Fiori Launchpad deployment</li>
+    <li><strong>Configure:</strong> Set up tiles and catalogs</li>
+</ol>
+
+<h2>10.4 Environment Variables</h2>
+<ul>
+    <li>Service URLs per environment</li>
+    <li>Authentication configurations</li>
+    <li>Feature flags for environment-specific behavior</li>
+</ul>
+
+<h1 id="testing">11. Testing Strategy</h1>
+
+<h2>11.1 Testing Structure</h2>
+<div class="code-block">
+test/
+├── testsuite.qunit.html
+├── testsuite.qunit.js
+├── integration/
+│   ├── AllJourneys.js
+│   ├── NavigationJourney.js
+│   ├── opaTests.qunit.html
+│   ├── opaTests.qunit.js
+│   ├── arrangements/
+│   │   └── Startup.js
+│   └── pages/
+│       ├── App.js
+│       └── ProjectCostReport.js
+└── unit/
+    ├── AllTests.js
+    ├── unitTests.qunit.html
+    ├── unitTests.qunit.js
+    └── controller/
+        └── ProjectCostReport.controller.js
+</div>
+
+<h2>11.2 Testing Types</h2>
+<table>
+    <tr><th>Test Type</th><th>Framework</th><th>Purpose</th></tr>
+    <tr><td>Unit Tests</td><td>QUnit</td><td>Individual function testing</td></tr>
+    <tr><td>Integration Tests</td><td>OPA5</td><td>End-to-end user journey testing</td></tr>
+    <tr><td>Mock Testing</td><td>Local Mock</td><td>Testing with local mock data</td></tr>
+    <tr><td>Performance Tests</td><td>Custom</td><td>Load and stress testing</td></tr>
+</table>
+
+<h2>11.3 Test Coverage Areas</h2>
+<ul>
+    <li>Controller methods and business logic</li>
+    <li>Data model operations</li>
+    <li>User interface interactions</li>
+    <li>Authorization scenarios</li>
+    <li>Error handling paths</li>
+</ul>
+
+<h1 id="maintenance">12. Maintenance & Support</h1>
+
+<h2>12.1 Code Quality Standards</h2>
+<ul>
+    <li><strong>ESLint:</strong> JavaScript linting (configurable)</li>
+    <li><strong>Naming Conventions:</strong> Consistent naming patterns</li>
+    <li><strong>Documentation:</strong> Inline code documentation</li>
+    <li><strong>Error Logging:</strong> Comprehensive error tracking</li>
+</ul>
+
+<h2>12.2 Monitoring & Logging</h2>
+<table>
+    <tr><th>Type</th><th>Purpose</th></tr>
+    <tr><td>Console Logging</td><td>Development debugging</td></tr>
+    <tr><td>Error Tracking</td><td>Production error monitoring</td></tr>
+    <tr><td>Performance Metrics</td><td>Load time monitoring</td></tr>
+    <tr><td>User Analytics</td><td>Usage pattern analysis</td></tr>
+</table>
+
+<h2>12.3 Maintenance Procedures</h2>
+<ul>
+    <li><strong>Regular Updates:</strong> UI5 version updates</li>
+    <li><strong>Security Patches:</strong> Apply security updates</li>
+    <li><strong>Bug Fixes:</strong> Systematic issue resolution</li>
+    <li><strong>Feature Enhancements:</strong> Continuous improvement</li>
+</ul>
+
+<h2>12.4 Support Documentation</h2>
+<ul>
+    <li><strong>User Manuals:</strong> End-user documentation</li>
+    <li><strong>Developer Guides:</strong> Technical documentation</li>
+    <li><strong>Troubleshooting:</strong> Common issue resolution</li>
+    <li><strong>API Documentation:</strong> Service interface documentation</li>
+</ul>
+
+<div class="section-break"></div>
+
+<h1>Appendices</h1>
+
+<h2>Appendix A: Number Formatting Specifications</h2>
+<table>
+    <tr><th>Format Type</th><th>Specification</th></tr>
+    <tr><td>Decimal Separator</td><td>. (dot)</td></tr>
+    <tr><td>Thousands Separator</td><td>, (comma)</td></tr>
+    <tr><td>Currency</td><td>AED (UAE Dirham)</td></tr>
+    <tr><td>Decimal Places</td><td>2 for currency, configurable for percentages</td></tr>
+</table>
+
+<h2>Appendix B: Browser Compatibility</h2>
+<table>
+    <tr><th>Category</th><th>Browsers</th></tr>
+    <tr><td>Primary</td><td>Chrome, Edge, Firefox, Safari</td></tr>
+    <tr><td>Mobile</td><td>iOS Safari, Android Chrome</td></tr>
+    <tr><td>SAP Support</td><td>As per UI5 compatibility matrix</td></tr>
+</table>
+
+<h2>Appendix C: Performance Benchmarks</h2>
+<table>
+    <tr><th>Operation</th><th>Target Time</th></tr>
+    <tr><td>Initial Load</td><td>&lt; 3 seconds</td></tr>
+    <tr><td>Navigation</td><td>&lt; 1 second</td></tr>
+    <tr><td>Data Operations</td><td>&lt; 5 seconds</td></tr>
+    <tr><td>Large Dataset</td><td>&lt; 10 seconds</td></tr>
+</table>
+
+<div class="footer">
+    <p><strong>Document Version:</strong> 1.0</p>
+    <p><strong>Last Updated:</strong> August 19, 2025</p>
+    <p><strong>Created by:</strong> Technical Documentation Team</p>
+    <p><strong>Application:</strong> Project Cost Report (Post-Finance Revenue)</p>
+    <p><strong>Namespace:</strong> com.atg.ppm.postfinrevenue</p>
+</div>
+
+</body>
+</html>

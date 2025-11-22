@@ -1,0 +1,520 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+>
+    <VBox width="100%"
+    visible="{ViewControl>/Tables/ShowCostSummary}"
+    >
+        <Toolbar>
+            <Title text="Cost Summary" level="H2"/>
+            <ToolbarSpacer />
+            <Button
+                icon="sap-icon://full-screen"
+                press=".onCostSummaryTableFullScreen"
+                tooltip="Open in Fullscreen"
+            />
+            <Button
+                icon="sap-icon://personnel-view"
+                press=".onCostDetailTablePersonalizePress"
+                tooltip="Personalize Table"
+            />
+        </Toolbar>
+        <table:Table
+            id="CostSummaryTable"
+            visible="{ViewControl>/Tables/ShowCostSummary}"
+            selectionMode="None"
+            enableColumnFreeze="true"
+            fixedColumnCount="3"
+            visibleRowCount="10"
+            rowsUpdated=".onTableRowsUpdated"
+            class="mainTable"
+            rows="{
+                path: 'to_CostDetail',
+                parameters: {
+                    groupId: 'costChanges'
+                },
+                sorter: {
+                    path: 'counter',
+                    descending: false
+                }
+            }"
+        >
+            <table:rowSettingsTemplate>
+                <table:RowSettings
+                    highlight="{= 
+                        ${HierarchyLevel}===2 ? 'Information' : 
+                        ${HierarchyLevel}===3 ? 'Warning' : 
+                        ${HierarchyLevel}===4 ? 'Success' : 
+                        'None'
+                    }"
+                />
+            </table:rowSettingsTemplate>
+
+            <table:columns>
+                <table:Column id="CostSummaryTableColumnWBSLevel2Descr">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/WBSLevel2Descr/@sap:label}"
+                            textAlign="Left"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox>
+                            <Text
+                                text="{WBSLevel2Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn"
+                                visible="{= ${HierarchyLevel} !== 5 &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                                <Text
+                                    text="Sub Total:-"
+                                    wrapping="false"
+                                    textAlign="Right"
+                                    class="hierarchyLevel6"
+                                    visible="{= ${HierarchyLevel} === 6}"
+                                />
+                                <Text
+                                    text="Total:-"
+                                    wrapping="false"
+                                    textAlign="Right"
+                                    class="hierarchyLevel7"
+                                    visible="{= ${HierarchyLevel} === 7}"
+                                />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnWBSLevel3Descr">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/WBSLevel3Descr/@sap:label}"
+                            textAlign="Left"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox>
+                            <Text
+                                text="{WBSLevel3Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text
+                                text="{WBSLevel3Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn hierarchyLevel6"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text
+                                text="{WBSLevel3Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn hierarchyLevel7"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnWBSLevel4Descr">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/WBSLevel4Descr/@sap:label}"
+                            textAlign="Left"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox>
+                            <Text
+                                text="{WBSLevel4Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text
+                                text="{WBSLevel4Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn hierarchyLevel6"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text
+                                text="{WBSLevel4Descr}"
+                                wrapping="false"
+                                class="emphasizedColumn hierarchyLevel7"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnTenderCost" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/TenderCost/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['TenderCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['TenderCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['TenderCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnRevisedBudget" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/RevisedBudget/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['RevisedBudget', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['RevisedBudget', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['RevisedBudget', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnPotentialFinalAccountCost" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/PotentialFinalAccountCost/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                            <Input
+                                value="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnActualCostPO" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/ActualCostPO/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['ActualCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['ActualCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['ActualCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnActualCostSO" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/ActualCostSO/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['ActualCostSO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['ActualCostSO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['ActualCostSO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnCommitedCostPO" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/CommitedCostPO/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['CommitedCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['CommitedCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['CommitedCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnTotalPOCost" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/TotalPOCost/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['TotalPOCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['TotalPOCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['TotalPOCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnCostToComplete" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/CostToComplete/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                            <Input
+                                value="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnProjectedFinalCost" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/ProjectedFinalCost/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['ProjectedFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['ProjectedFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['ProjectedFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnVariance" width="10rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/Variance/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox justifyContent="End">
+                            <Text 
+                                text="{ parts: ['Variance', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                            />
+                            <Text 
+                                text="{ parts: ['Variance', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel6 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 6}"
+                            />
+                            <Text 
+                                text="{ parts: ['Variance', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
+                                wrapping="false"
+                                class="hierarchyLevel7 amount-field"
+                                textAlign="End"
+                                visible="{= ${HierarchyLevel} === 7}"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+                <table:Column id="CostSummaryTableColumnRemarks" width="8rem">
+                    <table:label>
+                        <Label
+                            text="{/#ProjectCostSummaryDataType/Remarks/@sap:label}"
+                            textAlign="Left"
+                        />
+                    </table:label>
+                    <table:template>
+                        <HBox visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}">
+                            <Text 
+                                text="{Remarks}"
+                                wrapping="false"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false}"
+                            />
+                            <Input
+                                value="{Remarks}"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                                width="auto"
+                                maxLength="255"
+                            />
+                        </HBox>
+                    </table:template>
+                </table:Column>
+            </table:columns>
+        </table:Table>
+    </VBox>
+</core:FragmentDefinition>

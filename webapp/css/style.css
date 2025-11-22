@@ -1,0 +1,259 @@
+/* Enter your custom styles here */
+
+/* TEST - This should make ALL text red if CSS is loading */
+/* Remove this after testing */
+/*
+* {
+    color: red !important;
+}
+*/
+
+.currencySuffix-header {
+    font-size: 0.8em;
+    color: #000;
+    margin-left: 4px;
+    vertical-align: middle;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Ensure HBox containers properly display currency elements */
+.sapMHBox {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.sapMHBox .currencySuffix-header {
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin-left: 0.5rem !important;
+}
+
+/* Special handling for SmartForm display mode */
+.sapUiCompSmartForm .sapMHBox .currencySuffix-header {
+    display: inline-block !important;
+    visibility: visible !important;
+    color: #666 !important;
+}
+
+.currencySuffix {
+    font-size: 1em;
+    color: #666;
+    margin-left: 4px;
+    vertical-align: text-top;
+}
+
+.myCustomRowColor>.sapUiTableRowHighlight {
+    background-color: #ffe0b2 !important;
+    /* Example: light orange */
+}
+
+.myCustomRowColor>td {
+    background-color: #ffe0b2 !important;
+    /* Example: light orange */
+}
+
+/* Highly specific selector for input inside readonlyInput */
+.readonlyInput .sapMInputBaseContentWrapper > .sapMInputBaseInner,
+.readonlyInput input.sapMInputBaseInner,
+.readonlyInput .sapMInputBaseInner {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #000 !important;
+    pointer-events: none !important;
+}
+
+/* Also target disabled and readonly states */
+.sapMInputBaseDisabled .sapMInputBaseInner,
+.sapMInputBaseReadonly .sapMInputBaseInner {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #000 !important;
+}
+
+/* Skeleton Screen Styles */
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton-line {
+    display: inline-block;
+    height: 1rem;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+    margin: 0.25rem 0;
+}
+
+.skeleton-line-short {
+    width: 60px;
+}
+
+.skeleton-line-medium {
+    width: 120px;
+}
+
+.skeleton-line-long {
+    width: 200px;
+}
+
+.skeleton-block {
+    height: 100px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+}
+
+.skeleton-form {
+    height: 150px;
+}
+
+.skeleton-table {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.skeleton-table-header {
+    display: flex;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    gap: 1rem;
+}
+
+.skeleton-table-row {
+    display: flex;
+    padding: 1rem;
+    border-top: 1px solid #e0e0e0;
+    gap: 1rem;
+}
+
+/* Skeleton overlay styles */
+.skeletonOverlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 1000 !important;
+    background-color: white !important;
+    padding: 2rem !important;
+}
+
+/* Simple shimmer effect for text */
+.skeleton-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.5s infinite;
+    color: transparent !important;
+    border-radius: 4px;
+    min-width: 100px;
+    min-height: 1rem;
+}
+
+.emphasizedColumn {
+    font-weight: 600 !important;       /* Take full width of container */
+}
+
+
+
+/* Hierarchy Level Styling - Enhanced for better visibility */
+/* General hierarchy level classes for text/description fields */
+.hierarchyLevel6 {
+    font-weight: 600 !important;         /* Semi-bold for subtotal descriptions */
+    font-style: italic !important;       /* Italics for Sub Total */
+}
+
+.hierarchyLevel7 {
+    font-weight: 700 !important;         /* Bold for total descriptions */
+    font-style: italic !important;       /* Italics for Total */
+}
+
+/* Specific styling for amount/currency fields only */
+.amount-field {
+    text-align: right !important;        /* Right-align all currency values */
+    display: inline-block !important;    /* Ensure alignment applies */
+    width: 100% !important;              /* Take full width of container */
+}
+
+/* Force right alignment on SAP UI5 Text controls with currency formatting */
+.amount-field.sapMText,
+.amount-field .sapMText,
+.sapMText.amount-field {
+    text-align: right !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Override SAP UI5 currency control alignment */
+.amount-field * {
+    text-align: right !important;
+}
+
+.hierarchyLevel6.amount-field {
+    color: #2e7d32 !important;          /* Dark green text */
+    font-weight: 600 !important;         /* Semi-bold */
+    background-color: #e8f5e8 !important; /* Light green background */
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border-top: 1px solid #4caf50 !important; /* Top border only for subtotal */
+    border-bottom: 1px solid #4caf50 !important; /* Bottom border only for subtotal */
+    border-left: none !important;       /* Remove left border */
+    border-right: none !important;      /* Remove right border */
+    width: 140px !important;             /* Fixed width for subtotal - updated to match 10rem */
+    text-align: right !important;        /* Right-align currency values */
+    display: inline-block !important;    /* Ensure width applies */
+}
+
+.hierarchyLevel7.amount-field {
+    color: #1565c0 !important;          /* Dark blue text */
+    font-weight: 700 !important;         /* Bold for total */
+    background-color: #e3f2fd !important; /* Light blue background */
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border-top: 2px solid #1976d2 !important;  /* Slightly thicker top border for total emphasis */
+    border-bottom: 1px solid #2196f3 !important; /* Bottom border for total */
+    border-left: none !important;       /* Remove left border */
+    border-right: none !important;      /* Remove right border */
+    width: 140px !important;             /* Fixed width for total - updated to match 10rem */
+    text-align: right !important;        /* Right-align currency values */
+    display: inline-block !important;    /* Ensure width applies */
+}
+
+/* Alternative professional color scheme for amount fields - uncomment to use */
+/*
+.hierarchyLevel6.amount-field {
+    color: #6d4c41 !important;          
+    font-weight: 600 !important;        
+    background-color: #efebe9 !important; 
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border-left: 3px solid #8d6e63 !important; 
+}
+
+.hierarchyLevel7.amount-field {
+    color: #37474f !important;          
+    font-weight: 700 !important;        
+    background-color: #eceff1 !important; 
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border-left: 3px solid #546e7a !important; 
+    border-top: 2px solid #455a64 !important;  
+}
+*/
+

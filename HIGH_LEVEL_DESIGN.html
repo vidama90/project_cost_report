@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Level Design Document - Project Cost Report Application</title>
+    <style>
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #1B5E20;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #1B5E20;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header h2 {
+            color: #666;
+            font-size: 18px;
+            font-weight: normal;
+            margin-top: 0;
+        }
+        
+        .toc {
+            background-color: #f1f8e9;
+            border: 1px solid #4CAF50;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+        
+        .toc h3 {
+            color: #1B5E20;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        h1 {
+            color: #1B5E20;
+            font-size: 24px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            page-break-before: always;
+        }
+        
+        h2 {
+            color: #2E7D32;
+            font-size: 20px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        h3 {
+            color: #333;
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        
+        h4 {
+            color: #555;
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f1f8e9;
+        }
+        
+        .code-block {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11px;
+            overflow-x: auto;
+        }
+        
+        .design-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .decision-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .architecture-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .section-break {
+            page-break-before: always;
+        }
+        
+        .diagram {
+            text-align: center;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            font-size: 10px;
+        }
+        
+        .flow-diagram {
+            text-align: center;
+            font-family: monospace;
+            background-color: #f1f8e9;
+            padding: 20px;
+            border: 1px solid #4CAF50;
+            margin: 20px 0;
+            font-size: 10px;
+        }
+        
+        @media print {
+            body {
+                margin: 20px;
+            }
+            
+            .header {
+                page-break-after: avoid;
+            }
+            
+            h1 {
+                page-break-before: always;
+            }
+            
+            h1:first-of-type {
+                page-break-before: avoid;
+            }
+            
+            table {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>High Level Design Document</h1>
+    <h2>Project Cost Report Application (Post-Finance Revenue)</h2>
+    <p><strong>Version:</strong> 1.0 | <strong>Date:</strong> August 19, 2025</p>
+    <p><strong>Document Type:</strong> High Level Design (HLD)</p>
+</div>
+
+<div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+        <li><a href="#introduction">Introduction & Overview</a></li>
+        <li><a href="#system-architecture">System Architecture</a></li>
+        <li><a href="#component-design">Component Design</a></li>
+        <li><a href="#data-architecture">Data Architecture</a></li>
+        <li><a href="#ui-design">User Interface Design</a></li>
+        <li><a href="#integration-design">Integration Design</a></li>
+        <li><a href="#security-design">Security Design</a></li>
+        <li><a href="#performance-design">Performance Design</a></li>
+        <li><a href="#design-decisions">Design Decisions & Rationale</a></li>
+        <li><a href="#deployment-architecture">Deployment Architecture</a></li>
+    </ol>
+</div>
+
+<h1 id="introduction">1. Introduction & Overview</h1>
+
+<h2>1.1 Purpose</h2>
+<p>This High Level Design document describes the overall system architecture, design approach, and key design decisions for the Project Cost Report Application. It serves as a blueprint for the development team and stakeholders to understand the system's structure and behavior.</p>
+
+<h2>1.2 Scope</h2>
+<div class="design-box">
+    <strong>System Scope:</strong>
+    <ul>
+        <li><strong>Primary Function:</strong> Project cost reporting and financial analysis for construction projects</li>
+        <li><strong>User Base:</strong> Project managers, finance teams, cost controllers</li>
+        <li><strong>Integration:</strong> SAP ERP backend systems</li>
+        <li><strong>Platform:</strong> SAP Fiori Launchpad (web-based)</li>
+    </ul>
+</div>
+
+<h2>1.3 System Context</h2>
+<div class="diagram">
+<pre>
+                           ┌─────────────────────────────────────┐
+                           │         Business Context           │
+                           └─────────────────────────────────────┘
+                                              │
+    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+    │   Project       │    │   Finance       │    │   Cost Control  │    │   Management    │
+    │   Managers      │    │   Teams         │    │   Teams         │    │   Reporting     │
+    └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+              │                       │                       │                       │
+              └───────────────────────┼───────────────────────┼───────────────────────┘
+                                      │                       │
+                           ┌─────────────────────────────────────┐
+                           │  Project Cost Report Application   │
+                           └─────────────────────────────────────┘
+                                              │
+                           ┌─────────────────────────────────────┐
+                           │         SAP ERP System             │
+                           └─────────────────────────────────────┘
+</pre>
+</div>
+
+<h1 id="system-architecture">2. System Architecture</h1>
+
+<h2>2.1 Architectural Style</h2>
+<div class="architecture-box">
+    <strong>Layered Architecture Pattern</strong>
+    <p>The application follows a 3-tier layered architecture with clear separation of concerns:</p>
+    <ul>
+        <li><strong>Presentation Layer:</strong> SAP UI5 Frontend</li>
+        <li><strong>Business Logic Layer:</strong> SAP Gateway OData Services</li>
+        <li><strong>Data Layer:</strong> SAP ERP/S4HANA Backend</li>
+    </ul>
+</div>
+
+<h2>2.2 High-Level Architecture</h2>
+<div class="diagram">
+<pre>
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              PRESENTATION LAYER                                    │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Create View   │  │   Change View   │  │  Display View   │  │ Selection View  │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+│                                                                                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │  Header Form    │  │ Header Items    │  │  Valuation      │  │  Cost Tables    │ │
+│  │   Fragment      │  │    Fragment     │  │   Fragment      │  │   Fragments     │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                          ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                             INTEGRATION LAYER                                      │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │  Authorization  │  │   OData Model   │  │   JSON Models   │  │   Formatters    │ │
+│  │    Helper       │  │   Integration   │  │   (UI State)    │  │   & Utilities   │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                          ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              SERVICE LAYER                                         │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │  Project Cost   │  │   Header Item   │  │   Valuation     │  │   Cost Detail   │ │
+│  │   Report API    │  │      API        │  │      API        │  │      API        │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+│                                                                                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Actual Cost   │  │   Summary Data  │  │  Authorization  │  │    Metadata     │ │
+│  │      API        │  │      API        │  │      API        │  │      API        │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                          ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                               DATA LAYER                                           │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Project       │  │    Financial    │  │      WBS        │  │   Cost Center   │ │
+│  │   Master Data   │  │      Data       │  │     Data        │  │     Data        │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+</pre>
+</div>
+
+<h2>2.3 Technology Stack Overview</h2>
+<table>
+    <tr><th>Layer</th><th>Technology</th><th>Purpose</th><th>Version</th></tr>
+    <tr><td>Frontend</td><td>SAP UI5</td><td>User interface framework</td><td>1.120.14</td></tr>
+    <tr><td>Frontend</td><td>JavaScript ES6+</td><td>Programming language</td><td>Latest</td></tr>
+    <tr><td>Integration</td><td>OData v2</td><td>Data service protocol</td><td>2.0</td></tr>
+    <tr><td>Backend</td><td>SAP Gateway</td><td>Service layer</td><td>SAP NetWeaver</td></tr>
+    <tr><td>Backend</td><td>SAP ERP/S4HANA</td><td>Business logic & data</td><td>Latest</td></tr>
+    <tr><td>Infrastructure</td><td>HTTPS</td><td>Secure communication</td><td>TLS 1.2+</td></tr>
+</table>
+
+<h1 id="component-design">3. Component Design</h1>
+
+<h2>3.1 Application Components</h2>
+<div class="flow-diagram">
+<pre>
+                    ┌─────────────────────────────────────┐
+                    │          App Controller            │
+                    │     (Central Orchestrator)         │
+                    └─────────────────────────────────────┘
+                                      │
+                ┌─────────────────────┼─────────────────────┐
+                │                     │                     │
+    ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐
+    │   Selection         │ │   Report Views      │ │   Authorization     │
+    │   Controller        │ │   Controllers       │ │   Helper            │
+    └─────────────────────┘ └─────────────────────┘ └─────────────────────┘
+                │                     │                     │
+    ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐
+    │   Selection         │ │   Create/Change/    │ │   Security          │
+    │   Fragment          │ │   Display Views     │ │   Services          │
+    └─────────────────────┘ └─────────────────────┘ └─────────────────────┘
+                                      │
+                ┌─────────────────────┼─────────────────────┐
+                │                     │                     │
+    ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐
+    │   Header Form       │ │   Data Tables       │ │   Calculation       │
+    │   Fragment          │ │   Fragments         │ │   Engine            │
+    └─────────────────────┘ └─────────────────────┘ └─────────────────────┘
+</pre>
+</div>
+
+<h2>3.2 Component Responsibilities</h2>
+
+<h3>3.2.1 Core Controllers</h3>
+<table>
+    <tr><th>Component</th><th>Responsibility</th><th>Key Functions</th></tr>
+    <tr><td>App.controller.js</td><td>Central application logic</td><td>Data orchestration, calculations, state management</td></tr>
+    <tr><td>Selection.controller.js</td><td>Project selection</td><td>Filter projects, navigate to reports</td></tr>
+    <tr><td>ReportCreate.controller.js</td><td>Report creation</td><td>New report workflow, validation</td></tr>
+    <tr><td>ReportChange.controller.js</td><td>Report modification</td><td>Edit workflow, change tracking</td></tr>
+    <tr><td>ReportDisplay.controller.js</td><td>Report viewing</td><td>Read-only display, export functions</td></tr>
+</table>
+
+<h3>3.2.2 Utility Components</h3>
+<table>
+    <tr><th>Component</th><th>Responsibility</th><th>Key Functions</th></tr>
+    <tr><td>AuthorizationHelper.js</td><td>Security enforcement</td><td>Role checking, access control</td></tr>
+    <tr><td>TablePersonalizer.js</td><td>UI customization</td><td>Table settings, user preferences</td></tr>
+    <tr><td>models.js</td><td>Data model setup</td><td>Model initialization, configuration</td></tr>
+</table>
+
+<h2>3.3 Fragment Architecture</h2>
+<div class="design-box">
+    <strong>Modular Fragment Design</strong>
+    <p>Reusable UI fragments promote code reuse and maintainability:</p>
+    <ul>
+        <li><strong>HeaderForm.fragment.xml:</strong> Project header information input/display</li>
+        <li><strong>HeaderItemTable.fragment.xml:</strong> Project items with financial calculations</li>
+        <li><strong>ValuationTable.fragment.xml:</strong> Valuation data management</li>
+        <li><strong>CostSummaryTable.fragment.xml:</strong> Aggregated cost view</li>
+        <li><strong>CostItemTable.fragment.xml:</strong> Detailed line item view</li>
+        <li><strong>SkeletonLoader.fragment.xml:</strong> Loading state management</li>
+    </ul>
+</div>
+
+<h1 id="data-architecture">4. Data Architecture</h1>
+
+<h2>4.1 Data Flow Architecture</h2>
+<div class="flow-diagram">
+<pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   User Input    │───▶│   Validation    │───▶│   Model Update  │───▶│   Calculation   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                                                │
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐               │
+│   UI Refresh    │◄───│   Backend Sync  │◄───│   State Update  │◄──────────────┘
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+</div>
+
+<h2>4.2 Entity Relationship Design</h2>
+<div class="diagram">
+<pre>
+                    ┌─────────────────────────────────────┐
+                    │         ProjectCostRept            │
+                    │  ┌─────────────────────────────────┐│
+                    │  │ + ReportNumber (PK)             ││
+                    │  │ + ProjectNumber                 ││
+                    │  │ + ReportStatus                  ││
+                    │  │ + ReportingMonth                ││
+                    │  │ + TransactionCurrency           ││
+                    │  └─────────────────────────────────┘│
+                    └─────────────────────────────────────┘
+                                      │
+                ┌─────────────────────┼─────────────────────┐
+                │                     │                     │
+                ▼                     ▼                     ▼
+    ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐
+    │     HeaderItem      │ │     Valuation       │ │     CostDetail      │
+    │ ┌─────────────────┐ │ │ ┌─────────────────┐ │ │ ┌─────────────────┐ │
+    │ │ + ReportNumber  │ │ │ │ + ReportNumber  │ │ │ │ + ReportNumber  │ │
+    │ │ + WBSElement    │ │ │ │ + WBSElement    │ │ │ │ + WBSElement    │ │
+    │ │ + ForecastValue │ │ │ │ + CumulCertif   │ │ │ │ + ActualCostPO  │ │
+    │ │ + ForecastCost  │ │ │ │ + CumulInternal │ │ │ │ + ActualCostSO  │ │
+    │ └─────────────────┘ │ │ └─────────────────┘ │ │ │ + CostToComplete│ │
+    └─────────────────────┘ └─────────────────────┘ │ └─────────────────┘ │
+                                                   └─────────────────────┘
+                                                             │
+                                                             ▼
+                                                   ┌─────────────────────┐
+                                                   │      CostItem       │
+                                                   │ ┌─────────────────┐ │
+                                                   │ │ + ReportNumber  │ │
+                                                   │ │ + Item          │ │
+                                                   │ │ + ItemText      │ │
+                                                   │ │ + PONumber      │ │
+                                                   │ │ + POValue       │ │
+                                                   │ └─────────────────┘ │
+                                                   └─────────────────────┘
+</pre>
+</div>
+
+<h2>4.3 Data Models</h2>
+
+<h3>4.3.1 OData Model</h3>
+<div class="architecture-box">
+    <strong>Primary Data Model</strong>
+    <ul>
+        <li><strong>Service:</strong> Z_UI_PPM_PROJECTCOSTRPT_O2</li>
+        <li><strong>Type:</strong> OData v2.0</li>
+        <li><strong>Mode:</strong> Two-way binding for real-time updates</li>
+        <li><strong>Batch Processing:</strong> Enabled for performance optimization</li>
+    </ul>
+</div>
+
+<h3>4.3.2 JSON Models</h3>
+<table>
+    <tr><th>Model</th><th>Purpose</th><th>Scope</th></tr>
+    <tr><td>ViewControl</td><td>UI state management</td><td>Global application state</td></tr>
+    <tr><td>Currency</td><td>Currency configuration</td><td>Application-wide currency settings</td></tr>
+    <tr><td>i18n</td><td>Internationalization</td><td>Text resources and localization</td></tr>
+</table>
+
+<h1 id="ui-design">5. User Interface Design</h1>
+
+<h2>5.1 UI Architecture Pattern</h2>
+<div class="design-box">
+    <strong>Object Page Layout Pattern</strong>
+    <p>The application uses SAP Fiori's Object Page Layout for consistent user experience:</p>
+    <ul>
+        <li><strong>Header Area:</strong> Project information and key metrics</li>
+        <li><strong>Section Areas:</strong> Tabbed sections for different data views</li>
+        <li><strong>Footer Area:</strong> Action buttons and navigation</li>
+    </ul>
+</div>
+
+<h2>5.2 View Hierarchy</h2>
+<div class="diagram">
+<pre>
+                           ┌─────────────────────────────────────┐
+                           │           App.view.xml             │
+                           │        (Root Container)            │
+                           └─────────────────────────────────────┘
+                                              │
+                ┌─────────────────────────────┼─────────────────────────────┐
+                │                             │                             │
+    ┌─────────────────────┐       ┌─────────────────────┐       ┌─────────────────────┐
+    │  ProjectCostReport  │       │    ReportCreate     │       │    ReportChange     │
+    │     .view.xml       │       │    .view.xml        │       │    .view.xml        │
+    │  (Selection View)   │       │  (Creation View)    │       │  (Edit View)        │
+    └─────────────────────┘       └─────────────────────┘       └─────────────────────┘
+                                              │                             │
+                                              └─────────────────────────────┼──────────┐
+                                                                           │         │
+                                                              ┌─────────────────────┐ │
+                                                              │   ReportDisplay     │ │
+                                                              │    .view.xml        │ │
+                                                              │  (Display View)     │ │
+                                                              └─────────────────────┘ │
+                                                                           │         │
+                                                              ┌─────────────────────┘ │
+                                                              │                       │
+                          ┌───────────────────────────────────┼───────────────────────┼──────────┐
+                          │                                   │                       │          │
+              ┌─────────────────────┐           ┌─────────────────────┐ ┌─────────────────────┐  │
+              │   HeaderForm        │           │  HeaderItemTable    │ │   ValuationTable    │  │
+              │   .fragment.xml     │           │  .fragment.xml      │ │   .fragment.xml     │  │
+              └─────────────────────┘           └─────────────────────┘ └─────────────────────┘  │
+                                                                                                 │
+                          ┌────────────────────────────────────────────────────────────────────┘
+                          │                                   │
+              ┌─────────────────────┐           ┌─────────────────────┐
+              │  CostSummaryTable   │           │   CostItemTable     │
+              │  .fragment.xml      │           │   .fragment.xml     │
+              └─────────────────────┘           └─────────────────────┘
+</pre>
+</div>
+
+<h2>5.3 Responsive Design Strategy</h2>
+<table>
+    <tr><th>Device Type</th><th>Screen Size</th><th>Layout Adaptation</th><th>Navigation</th></tr>
+    <tr><td>Desktop</td><td>1024px+</td><td>Full multi-column layout</td><td>Tabbed sections</td></tr>
+    <tr><td>Tablet</td><td>768-1023px</td><td>Stacked sections</td><td>Accordion sections</td></tr>
+    <tr><td>Phone</td><td>< 768px</td><td>Single column flow</td><td>Drill-down navigation</td></tr>
+</table>
+
+<h2>5.4 State Management Design</h2>
+<div class="decision-box">
+    <strong>Centralized State Management</strong>
+    <p>ViewControl JSON model manages all UI states:</p>
+    <ul>
+        <li><strong>Mode States:</strong> Create, Change, Display, Selection</li>
+        <li><strong>Visibility States:</strong> Section and field visibility control</li>
+        <li><strong>Editability States:</strong> Dynamic field enable/disable</li>
+        <li><strong>Table States:</strong> Show summary vs. detailed cost views</li>
+    </ul>
+</div>
+
+<h1 id="integration-design">6. Integration Design</h1>
+
+<h2>6.1 Integration Architecture</h2>
+<div class="flow-diagram">
+<pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  SAP UI5 App    │────│  SAP Gateway    │────│   SAP ERP       │────│   Database      │
+│                 │    │                 │    │                 │    │                 │
+│ • Controllers   │    │ • OData Service │    │ • Business      │    │ • Project Data  │
+│ • Models        │    │ • Metadata      │    │   Logic         │    │ • Financial     │
+│ • Views         │    │ • Annotations   │    │ • Validations   │    │   Data          │
+│                 │    │                 │    │ • Calculations  │    │ • Master Data   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+</div>
+
+<h2>6.2 Service Integration Design</h2>
+
+<h3>6.2.1 OData Service Endpoints</h3>
+<table>
+    <tr><th>Service Operation</th><th>HTTP Method</th><th>Purpose</th><th>Response Type</th></tr>
+    <tr><td>/ProjectCostRept</td><td>GET, POST, PUT</td><td>Main report CRUD operations</td><td>ProjectCostRept entity</td></tr>
+    <tr><td>/HeaderItem</td><td>GET, POST, PUT</td><td>Project item management</td><td>HeaderItem collection</td></tr>
+    <tr><td>/Valuation</td><td>GET, POST, PUT</td><td>Valuation data management</td><td>Valuation collection</td></tr>
+    <tr><td>/CostDetail</td><td>GET, POST, PUT</td><td>Cost summary data</td><td>CostDetail collection</td></tr>
+    <tr><td>/ActualCost</td><td>GET</td><td>Real-time cost data</td><td>ActualCost collection</td></tr>
+</table>
+
+<h3>6.2.2 Batch Processing Design</h3>
+<div class="architecture-box">
+    <strong>Optimized Data Operations</strong>
+    <ul>
+        <li><strong>Create Operations:</strong> Single batch request for header + related entities</li>
+        <li><strong>Update Operations:</strong> Change set for modified entities only</li>
+        <li><strong>Read Operations:</strong> $expand for related data in single request</li>
+        <li><strong>Error Handling:</strong> Atomic transaction rollback on failure</li>
+    </ul>
+</div>
+
+<h2>6.3 Authentication & Authorization Integration</h2>
+<div class="diagram">
+<pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   User Login    │───▶│  SAP Gateway    │───▶│   SAP Backend   │
+└─────────────────┘    │  Authentication │    │  Authorization  │
+                       └─────────────────┘    └─────────────────┘
+                                │                       │
+                                ▼                       ▼
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │   Session       │    │   Role Check    │
+                       │   Management    │    │   & Permissions │
+                       └─────────────────┘    └─────────────────┘
+                                │                       │
+                                ▼                       ▼
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │   Frontend      │    │   Operation     │
+                       │   Authorization │    │   Authorization │
+                       └─────────────────┘    └─────────────────┘
+</pre>
+</div>
+
+<h1 id="security-design">7. Security Design</h1>
+
+<h2>7.1 Security Architecture</h2>
+<div class="design-box">
+    <strong>Defense in Depth Strategy</strong>
+    <ul>
+        <li><strong>Transport Security:</strong> HTTPS/TLS encryption</li>
+        <li><strong>Authentication:</strong> SAP user authentication</li>
+        <li><strong>Authorization:</strong> Role-based access control</li>
+        <li><strong>Input Validation:</strong> Client and server-side validation</li>
+        <li><strong>Session Management:</strong> Secure session handling</li>
+    </ul>
+</div>
+
+<h2>7.2 Authorization Design</h2>
+<table>
+    <tr><th>Authorization Code</th><th>Operation</th><th>Description</th><th>Enforcement Point</th></tr>
+    <tr><td>01</td><td>Create</td><td>Create new cost reports</td><td>Frontend + Backend</td></tr>
+    <tr><td>02</td><td>Change</td><td>Modify existing reports</td><td>Frontend + Backend</td></tr>
+    <tr><td>03</td><td>Display</td><td>View reports</td><td>Frontend + Backend</td></tr>
+</table>
+
+<h2>7.3 Data Security Design</h2>
+<div class="architecture-box">
+    <strong>Data Protection Measures</strong>
+    <ul>
+        <li><strong>Data Encryption:</strong> In-transit via HTTPS</li>
+        <li><strong>Access Control:</strong> Field-level authorization</li>
+        <li><strong>Audit Trail:</strong> Change tracking and logging</li>
+        <li><strong>Data Validation:</strong> Type and range validation</li>
+    </ul>
+</div>
+
+<h1 id="performance-design">8. Performance Design</h1>
+
+<h2>8.1 Performance Architecture</h2>
+<div class="flow-diagram">
+<pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Progressive   │───▶│   Skeleton      │───▶│   Data          │───▶│   UI            │
+│   Loading       │    │   Screens       │    │   Optimization  │    │   Optimization  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │                       │
+         ▼                       ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ Lazy Loading    │    │ Visual Feedback │    │ Batch Requests  │    │ Fragment Reuse  │
+│ Component Load  │    │ During Load     │    │ Minimized Calls │    │ Memory Savings  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+</div>
+
+<h2>8.2 Loading Strategy Design</h2>
+<table>
+    <tr><th>Component</th><th>Loading Strategy</th><th>Performance Impact</th><th>User Experience</th></tr>
+    <tr><td>Initial App Load</td><td>Progressive loading</td><td>Faster perceived load time</td><td>Skeleton screens</td></tr>
+    <tr><td>Data Tables</td><td>Lazy loading</td><td>Reduced initial payload</td><td>Progressive reveal</td></tr>
+    <tr><td>Large Datasets</td><td>Pagination</td><td>Controlled memory usage</td><td>Smooth scrolling</td></tr>
+    <tr><td>Related Data</td><td>Batch requests</td><td>Minimized network calls</td><td>Atomic updates</td></tr>
+</table>
+
+<h2>8.3 Caching Strategy</h2>
+<div class="decision-box">
+    <strong>Multi-Level Caching</strong>
+    <ul>
+        <li><strong>Browser Cache:</strong> Static resources (JS, CSS, images)</li>
+        <li><strong>Model Cache:</strong> OData metadata and static master data</li>
+        <li><strong>Component Cache:</strong> Reusable UI fragments</li>
+        <li><strong>Application Cache:</strong> User preferences and settings</li>
+    </ul>
+</div>
+
+<h1 id="design-decisions">9. Design Decisions & Rationale</h1>
+
+<h2>9.1 Architecture Decisions</h2>
+
+<h3>9.1.1 Frontend Framework Selection</h3>
+<div class="decision-box">
+    <strong>Decision:</strong> SAP UI5 Framework
+    <br><strong>Rationale:</strong>
+    <ul>
+        <li>Native integration with SAP ecosystem</li>
+        <li>Enterprise-grade security and performance</li>
+        <li>Responsive design capabilities</li>
+        <li>Extensive control library</li>
+        <li>Strong SAP support and documentation</li>
+    </ul>
+    <strong>Alternatives Considered:</strong> React, Angular, Vue.js
+</div>
+
+<h3>9.1.2 Data Service Pattern</h3>
+<div class="decision-box">
+    <strong>Decision:</strong> OData v2 Services
+    <br><strong>Rationale:</strong>
+    <ul>
+        <li>Standardized RESTful protocol</li>
+        <li>Automatic UI5 data binding</li>
+        <li>Built-in metadata support</li>
+        <li>Batch operation capabilities</li>
+        <li>SAP Gateway integration</li>
+    </ul>
+    <strong>Alternatives Considered:</strong> REST APIs, GraphQL
+</div>
+
+<h2>9.2 UI Design Decisions</h2>
+
+<h3>9.2.1 Component Architecture</h3>
+<div class="decision-box">
+    <strong>Decision:</strong> Fragment-based modular design
+    <br><strong>Rationale:</strong>
+    <ul>
+        <li>Code reusability across views</li>
+        <li>Maintainability and testability</li>
+        <li>Memory efficiency</li>
+        <li>Consistent user experience</li>
+        <li>Easier feature development</li>
+    </ul>
+    <strong>Alternatives Considered:</strong> Monolithic views, Custom controls
+</div>
+
+<h3>9.2.2 State Management</h3>
+<div class="decision-box">
+    <strong>Decision:</strong> Centralized JSON model for UI state
+    <br><strong>Rationale:</strong>
+    <ul>
+        <li>Single source of truth for UI state</li>
+        <li>Simplified debugging and testing</li>
+        <li>Predictable state transitions</li>
+        <li>Easy mode switching (Create/Change/Display)</li>
+        <li>Performance optimization</li>
+    </ul>
+    <strong>Alternatives Considered:</strong> Distributed state, Event-driven state
+</div>
+
+<h2>9.3 Security Design Decisions</h2>
+
+<h3>9.3.1 Authorization Approach</h3>
+<div class="decision-box">
+    <strong>Decision:</strong> Function-based authorization with helper utility
+    <br><strong>Rationale:</strong>
+    <ul>
+        <li>Granular access control</li>
+        <li>Separation of security concerns</li>
+        <li>Reusable authorization logic</li>
+        <li>Easy maintenance and updates</li>
+        <li>Consistent security enforcement</li>
+    </ul>
+    <strong>Alternatives Considered:</strong> Role-based only, Annotation-driven
+</div>
+
+<h1 id="deployment-architecture">10. Deployment Architecture</h1>
+
+<h2>10.1 Deployment Model</h2>
+<div class="diagram">
+<pre>
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              PRODUCTION ENVIRONMENT                                │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Fiori         │  │   SAP Gateway   │  │   SAP ERP       │  │   Database      │ │
+│  │   Launchpad     │  │                 │  │   Application   │  │   Server        │ │
+│  │                 │  │ • OData Service │  │   Server        │  │                 │ │
+│  │ • App Tiles     │  │ • Metadata      │  │                 │  │ • Project Data  │ │
+│  │ • Catalogs      │  │ • Annotations   │  │ • Business      │  │ • Financial     │ │
+│  │ • Roles         │  │ • Security      │  │   Logic         │  │   Data          │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                          ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                               TEST ENVIRONMENT                                     │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Fiori         │  │   SAP Gateway   │  │   SAP ERP       │  │   Test          │ │
+│  │   Launchpad     │  │   (Test)        │  │   (Test)        │  │   Database      │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                          ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                            DEVELOPMENT ENVIRONMENT                                 │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │   Local         │  │   Mock Server   │  │   Local         │  │   Mock Data     │ │
+│  │   Development   │  │                 │  │   Testing       │  │                 │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+</pre>
+</div>
+
+<h2>10.2 Environment Configuration</h2>
+<table>
+    <tr><th>Environment</th><th>Purpose</th><th>Data Source</th><th>User Access</th></tr>
+    <tr><td>Development</td><td>Feature development</td><td>Mock data</td><td>Developers</td></tr>
+    <tr><td>Test</td><td>Integration testing</td><td>Test SAP system</td><td>Testers, Business users</td></tr>
+    <tr><td>Production</td><td>Live business operations</td><td>Production SAP system</td><td>End users</td></tr>
+</table>
+
+<h2>10.3 Deployment Process</h2>
+<div class="flow-diagram">
+<pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Development   │───▶│      Build      │───▶│      Test       │───▶│   Production    │
+│   Complete      │    │    Process      │    │   Validation    │    │   Deployment    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │                       │
+         ▼                       ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ • Code Review   │    │ • npm run build │    │ • UAT Testing   │    │ • Go-Live       │
+│ • Unit Tests    │    │ • Minification  │    │ • Performance   │    │ • Monitoring    │
+│ • Integration   │    │ • Packaging     │    │ • Security      │    │ • Support       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+</div>
+
+<div class="footer">
+    <p><strong>Document Version:</strong> 1.0</p>
+    <p><strong>Last Updated:</strong> August 19, 2025</p>
+    <p><strong>Document Type:</strong> High Level Design (HLD)</p>
+    <p><strong>Application:</strong> Project Cost Report (Post-Finance Revenue)</p>
+    <p><strong>Namespace:</strong> com.atg.ppm.postfinrevenue</p>
+</div>
+
+</body>
+</html>

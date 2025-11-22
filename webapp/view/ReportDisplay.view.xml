@@ -1,0 +1,95 @@
+<mvc:View
+    controllerName="com.atg.ppm.postfinrevenue.controller.ReportDisplay"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:uxap="sap.uxap">
+    
+    <Page id="displayPage" showNavButton="true" navButtonPress=".onNavBack">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Button icon="sap-icon://nav-back" press=".onNavBack" type="Transparent"/>
+                </contentLeft>
+                <contentMiddle>
+                    <Title text="{i18n>display}" level="H1" class="sapUiNoMargin"/>
+                </contentMiddle>
+                <contentRight>
+                    <core:Icon src="sap-icon://display" color="#666666" size="1.25rem"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <uxap:ObjectPageLayout
+                id="ObjectPageLayout"
+                upperCaseAnchorBar="false"
+                showFooter="true">
+                
+                <!-- <uxap:headerTitle>
+                    <uxap:ObjectPageDynamicHeaderTitle>
+                        <uxap:expandedHeading>
+                            <HBox>
+                                <Title text="{i18n>displayReport}" wrapping="true"/>
+                            </HBox>
+                        </uxap:expandedHeading>
+                    </uxap:ObjectPageDynamicHeaderTitle>
+                </uxap:headerTitle>
+                 -->
+                <!-- Same sections as above -->
+                <uxap:sections>
+                    <uxap:ObjectPageSection id="Section1" titleUppercase="false" title="{i18n>section1}">
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection title="" titleUppercase="false">
+                                <uxap:blocks>
+                                    <core:Fragment fragmentName="com.atg.ppm.postfinrevenue.view.fragment.HeaderForm" type="XML"/>
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+                    
+                    <!-- Same sections -->
+                    <uxap:ObjectPageSection id="Section2" titleUppercase="false" title="{i18n>section2}">
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection titleUppercase="false">
+                                <uxap:blocks>
+                                    <core:Fragment fragmentName="com.atg.ppm.postfinrevenue.view.fragment.HeaderItemTable" type="XML"/>
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+
+                    <uxap:ObjectPageSection id="Section3" titleUppercase="false" title="{i18n>section3}">
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection titleUppercase="false">
+                                <uxap:blocks>
+                                    <core:Fragment fragmentName="com.atg.ppm.postfinrevenue.view.fragment.ValuationTable" type="XML"/>
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+
+                    <uxap:ObjectPageSection id="Section4" titleUppercase="false" title="{i18n>section4}">
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection titleUppercase="false">
+                                <uxap:blocks>
+                                    <core:Fragment fragmentName="com.atg.ppm.postfinrevenue.view.fragment.CostSummaryTable" type="XML"/>
+                                    <core:Fragment fragmentName="com.atg.ppm.postfinrevenue.view.fragment.CostItemTable" type="XML"/>
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+                </uxap:sections>
+                
+                <uxap:footer>
+                    <OverflowToolbar>
+                        <ToolbarSpacer/>
+                        <Button
+                            type="Reject"
+                            text="{i18n>closeButtn}"
+                            press=".onNavBack"/>
+                    </OverflowToolbar>
+                </uxap:footer>
+            </uxap:ObjectPageLayout>
+        </content>
+    </Page>
+</mvc:View>

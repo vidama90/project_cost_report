@@ -1,0 +1,166 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "com.atg.ppm.postfinrevenue",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.17.5",
+      "toolsId": "4201b539-ab21-4e70-8d78-48cf8d37b5cd"
+    },
+    "dataSources": {
+      "Z_UI_PPM_PROJECTCOSTRPT_O2_VAN": {
+        "uri": "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='Z_UI_PPM_PROJECTCOSTRPT_O2_VAN',Version='0001')/$value/",
+        "type": "ODataAnnotation",
+        "settings": {
+          "localUri": "localService/mainService/Z_UI_PPM_PROJECTCOSTRPT_O2_VAN.xml"
+        }
+      },
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/Z_UI_PPM_PROJECTCOSTRPT_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "Z_UI_PPM_PROJECTCOSTRPT_O2_VAN"
+          ],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.120.14",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.atg.ppm.postfinrevenue.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "useBatch": true,
+          "defaultBindingMode": "TwoWay"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "com.atg.ppm.postfinrevenue.view",
+        "async": true,
+        "viewPath": "com.atg.ppm.postfinrevenue.view"
+      },
+      "routes": [
+        {
+          "name": "home",
+          "pattern": "",
+          "target": [
+            "TargetProjectCostReport"
+          ]
+        },
+        {
+          "name": "RouteProjectCostReport",
+          "pattern": "ProjectCostReport:?query:",
+          "target": [
+            "TargetProjectCostReport"
+          ]
+        },
+        {
+          "name": "create",
+          "pattern": "create/{projectId}/{reportMonth}/{cutOffDate}/{lineItems}",
+          "target": [
+            "TargetReportCreate"
+          ]
+        },
+        {
+          "name": "change",
+          "pattern": "change/{reportId}/{cutOffDate}",
+          "target": [
+            "TargetReportChange"
+          ]
+        },
+        {
+          "name": "display",
+          "pattern": "display/{reportId}",
+          "target": [
+            "TargetReportDisplay"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetProjectCostReport": {
+          "id": "ProjectCostReport",
+          "name": "ProjectCostReport"
+        },
+        "TargetReportCreate": {
+          "id": "ReportCreate",
+          "name": "ReportCreate"
+        },
+        "TargetReportChange": {
+          "id": "ReportChange",
+          "name": "ReportChange"
+        },
+        "TargetReportDisplay": {
+          "id": "ReportDisplay",
+          "name": "ReportDisplay"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "com.atg.ppm.postfinrevenue.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  }
+}

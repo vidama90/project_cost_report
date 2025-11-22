@@ -1,0 +1,49 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <VBox class="sapUiMediumMargin">
+        <!-- Simple skeleton using UI5 controls -->
+        <VBox class="sapUiSmallMarginBottom">
+            <Title text="Loading Project Cost Report..." />
+            <ProgressIndicator 
+                percentValue="0" 
+                width="100%" 
+                class="sapUiMediumMarginTop"
+                state="None" 
+                showValue="false" />
+        </VBox>
+        
+        <!-- Placeholder for form -->
+        <Panel headerText="Report Details" class="sapUiMediumMarginBottom">
+            <VBox class="sapUiMediumMargin">
+                <HBox>
+                    <Label text="Project:" class="sapUiTinyMarginEnd" />
+                    <Text text="Loading..." class="skeleton-shimmer" />
+                </HBox>
+                <HBox class="sapUiTinyMarginTop">
+                    <Label text="Reporting Month:" class="sapUiTinyMarginEnd" />
+                    <Text text="Loading..." class="skeleton-shimmer" />
+                </HBox>
+                <HBox class="sapUiTinyMarginTop">
+                    <Label text="Status:" class="sapUiTinyMarginEnd" />
+                    <Text text="Loading..." class="skeleton-shimmer" />
+                </HBox>
+            </VBox>
+        </Panel>
+        
+        <!-- Placeholder for table -->
+        <Panel headerText="Cost Summary" class="sapUiMediumMarginBottom">
+            <VBox class="sapUiMediumMargin">
+                <Table busy="true" busyIndicatorDelay="0">
+                    <columns>
+                        <Column><Text text="WBS Element" /></Column>
+                        <Column><Text text="Budget" /></Column>
+                        <Column><Text text="Actual Cost" /></Column>
+                        <Column><Text text="Variance" /></Column>
+                    </columns>
+                    <items>
+                        <!-- Empty table will show busy indicator -->
+                    </items>
+                </Table>
+            </VBox>
+        </Panel>
+    </VBox>
+</core:FragmentDefinition>

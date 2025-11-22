@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <ViewSettingsDialog
+        confirm=".onTableSettingsConfirm"
+        cancel=".onTableSettingsCancel">
+        <sortItems>
+            <SortItem key="FinishingFund" text="Finishing Fund" />
+            <SortItem key="ProjectType" text="Project Type" />
+            <!-- Add more SortItem as needed -->
+        </sortItems>
+        <filterItems>
+            <FilterItem key="ProjectType" text="Project Type">
+                <values>
+                    <FilterItemValue key="TypeA" text="Type A" />
+                    <FilterItemValue key="TypeB" text="Type B" />
+                </values>
+            </FilterItem>
+        </filterItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>

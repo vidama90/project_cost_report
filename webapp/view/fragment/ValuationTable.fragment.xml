@@ -1,0 +1,298 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+>
+    <VBox>
+        <Toolbar>
+            <ToolbarSpacer />
+            <Button
+                icon="sap-icon://personnel-view"
+                press=".onValuationTablePersonalizePress"
+                tooltip="Personalize Table"
+            />
+        </Toolbar>
+        <ScrollContainer
+            height="100%"
+            width="100%"
+        >
+            <Table
+                xmlns="sap.m"
+                id="ValuationTable"
+                fixedLayout="Strict"
+                enableBusyIndicator="false"
+                items="{
+                    path: 'to_Valuation',
+                    parameters: {
+                        groupId: 'costChanges'
+                    }
+                }"
+                updateFinished=".onUpdateFinished"
+                xmlns:core="sap.ui.core"
+                width="100%"
+                core:require="{CurrencyType: 'sap/ui/model/type/Currency'}"
+            >
+                <columns>
+                    <!-- <Column id="ValuationTableColumnReportNumber" width="150px">
+                    <Label text="{/#ProjCostValuationDataType/ReportNumber/@sap:label}" />
+                </Column> -->
+                    <Column
+                        id="ValuationTableColumnWBSElement"
+                        width="150px"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/WBSElement/@sap:label}"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnCumulCertifToDate"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/CumulCertifToDate/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnPreviouslyCertified"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/PreviouslyCertified/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnMovement"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/Movement/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnCumulInternalValuation"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/CumulInternalValuation/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnPrevInternalValuation"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/PrevInternalValuation/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnCurrentMonthValue"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/CurrentMonthValue/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnWorkInProgress"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/WorkInProgress/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnInterDivCertifDeduction"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/InterDivCertifDeduction/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnOverclaims"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/Overclaims/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnUnderclaims"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/Underclaims/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                    <Column
+                        id="ValuationTableColumnSundryIncome"
+                        width="10rem"
+                    >
+                        <Label
+                            text="{/#ProjCostValuationDataType/SundryIncome/@sap:label}"
+                            textAlign="Right"
+                        />
+                    </Column>
+                </columns>
+                <ColumnListItem>
+                    <cells>
+                        <!-- <Text width="auto" text="{ReportNumber}" /> -->
+                        <Text
+                            width="auto"
+                            text="{WBSDescription}"
+                        />
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['CumulCertifToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['PreviouslyCertified', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['Movement', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['CumulInternalValuation', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                            />
+                            <Input
+                                value="{ parts: ['CumulInternalValuation', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                editable="{ViewControl>/Mode/IsEditable}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['PrevInternalValuation', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['CurrentMonthValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['WorkInProgress', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['InterDivCertifDeduction', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                            />
+                            <Input
+                                value="{ parts: ['InterDivCertifDeduction', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                editable="{ViewControl>/Mode/IsEditable}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['Overclaims', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                            />
+                            <Input
+                                value="{ parts: ['Overclaims', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                editable="{ViewControl>/Mode/IsEditable}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['Underclaims', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                            />
+                            <Input
+                                value="{ parts: ['Underclaims', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                editable="{ViewControl>/Mode/IsEditable}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                            />
+                        </HBox>
+                        <HBox justifyContent="End">
+                            <Text
+                                width="auto"
+                                text="{ parts: ['SundryIncome', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                class="amount-field"
+                                textAlign="End"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
+                            />
+                            <Input
+                                value="{ parts: ['SundryIncome', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                editable="{ViewControl>/Mode/IsEditable}"
+                                width="auto"
+                                class="amount-field"
+                                textAlign="End"
+                                change=".onCurrencyInputChange"
+                                visible="{= ${ViewControl>/Mode/IsEditable} === true}"
+                            />
+                        </HBox>
+                    </cells>
+                </ColumnListItem>
+            </Table>
+        </ScrollContainer>
+    </VBox>
+</core:FragmentDefinition>
