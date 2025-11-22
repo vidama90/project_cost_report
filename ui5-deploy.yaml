@@ -19,6 +19,6 @@ builder:
         app:
           name: ZBSP_PPM_FINREV
           package: ZATG_R1_PPM_ENH_POST_FIN_T2
-          transport: DS4K903648
+          transport: DS4K907288
         exclude:
           - /test/
