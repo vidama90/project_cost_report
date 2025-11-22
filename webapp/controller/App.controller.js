@@ -282,6 +282,7 @@ sap.ui.define([
             totalValue += val;
           });
           var totalMarginPercent = (totalValue !== 0) ? (totalMargin / totalValue) * 100 : 0;
+
           col.setFooter(
             new sap.m.HBox({
               justifyContent: "End",
@@ -311,6 +312,11 @@ sap.ui.define([
     },
 
     calculateTableTotals(Table, property) {
+
+      // Optimization: Fetch contexts once
+      var oBinding = Table.getBinding("rows");
+      if (!oBinding) return;
+      var aContexts = oBinding.getContexts(0, oBinding.getLength());
 
       Table.getColumns().forEach((col, ind) => {
         // Property exists in the array
@@ -374,12 +380,6 @@ sap.ui.define([
 
         if (costItemProperties.includes(colName))
           return;
-
-        // Get all data from binding instead of just visible rows
-        var oBinding = Table.getBinding("rows");
-        if (!oBinding) return;
-
-        var aContexts = oBinding.getContexts(0, oBinding.getLength());
 
         aContexts.forEach((oContext, ind) => {
           if (!oContext) {
@@ -897,6 +897,16 @@ sap.ui.define([
                 // Navigate to update page with the newly created report number after a delay
                 // This allows the success message to be visible for a while
                 setTimeout(() => {
+                  // Unbind and reset changes to ensure clean state for navigation
+                  UIControls.HeaderSmartForm.unbindElement();
+                  UIControls.HeaderItemTable.unbindElement();
+                  UIControls.ValuationTable.unbindElement();
+                  var oCostTable = this.getCostTable(UIControls);
+                  if (oCostTable) {
+                    oCostTable.unbindElement();
+                  }
+                  this.getModel().resetChanges();
+
                   var oRouter = this.getOwnerComponent().getRouter();
                   var sCutOffDate = this.formatDateForURL(this.CutOffDate || new Date());
                   oRouter.navTo("change", {
@@ -1169,6 +1179,20 @@ sap.ui.define([
 
       var ValuationTableRows = ValuationTable.getItems();
 
+      // Optimization: Pre-process CostTable data into a lookup map
+      var costLookup = {};
+      var oCostBinding = CostTable.getBinding("rows");
+      if (oCostBinding) {
+          var aCostContexts = oCostBinding.getContexts(0, oCostBinding.getLength());
+          aCostContexts.forEach((oCostContext) => {
+              if (!oCostContext) return;
+              var oCost = oCostContext.getObject();
+              if (oCost.HierarchyLevel === 6) {
+                  costLookup[oCost.WBSLevel2] = this.getNumber(oCost.ProjectedFinalCost);
+              }
+          });
+      }
+
       HeaderItemTable.getItems().forEach((row, ind) => {
         var oValuation = ValuationTableRows[ind].getBindingContext().getObject();
         var oHeaderItem = row.getBindingContext().getObject();
@@ -1199,18 +1223,8 @@ sap.ui.define([
 
         var ForecastFinalCost = '0.0';
 
-        // Get all data from cost table binding instead of just visible rows
-        var oCostBinding = CostTable.getBinding("rows");
-        if (oCostBinding) {
-          var aCostContexts = oCostBinding.getContexts(0, oCostBinding.getLength());
-          aCostContexts.forEach((oCostContext) => {
-            if (!oCostContext) return;
-            var oCost = oCostContext.getObject();
-
-            if (oCost.HierarchyLevel === 6 && (oHeaderItem.WBSElement === oCost.WBSLevel2)) {
-              ForecastFinalCost = this.getNumber(oCost.ProjectedFinalCost);
-            }
-          });
+        if (costLookup.hasOwnProperty(oHeaderItem.WBSElement)) {
+            ForecastFinalCost = costLookup[oHeaderItem.WBSElement];
         }
 
         oModel.setProperty(cxt.getPath() + '/ForecastFinalCost',
