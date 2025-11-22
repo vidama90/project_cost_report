@@ -510,11 +510,16 @@
             </table:Table>
             </VBox>
         </content>
-        <beginButton>
+        <buttons>
+            <Button
+                text="Refresh"
+                icon="sap-icon://refresh"
+                press=".onRefreshCostSummaryDialog"
+            />
             <Button
                 text="Close"
                 press=".onCloseCostSummaryDialog"
             />
-        </beginButton>
+        </buttons>
     </Dialog>
 </core:FragmentDefinition>

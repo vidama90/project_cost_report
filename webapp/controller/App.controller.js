@@ -19,6 +19,12 @@ sap.ui.define([
         // Refresh each table after rendering to ensure proper calculations and formatting
         try {
           if (UIControls.HeaderItemTable && UIControls.HeaderItemTable.getVisible()) {
+            var oBinding = UIControls.HeaderItemTable.getBinding("items");
+            if (oBinding) {
+              oBinding.attachEvent("dataReceived", () => {
+                this.refreshTable(UIControls.HeaderItemTable);
+              });
+            }
             this.refreshTable(UIControls.HeaderItemTable);
           }
         } catch (e) {
@@ -27,6 +33,10 @@ sap.ui.define([
 
         try {
           if (UIControls.ValuationTable && UIControls.ValuationTable.getVisible()) {
+            var oBinding = UIControls.ValuationTable.getBinding("items");
+            if (oBinding) {
+              oBinding.attachEvent("dataReceived", () => {
+                this.refreshTable(UIControls.ValuationTable);
             this.refreshTable(UIControls.ValuationTable);
           }
         } catch (e) {
@@ -1953,7 +1963,7 @@ sap.ui.define([
     },
     onUpdateFinished(oEvent) {
       var oTable = oEvent.getSource();
-      this.refreshTable(oTable);
+      // this.refreshTable(oTable);
     },
     refreshTable(oTable, property) {
 
@@ -2183,6 +2193,29 @@ sap.ui.define([
     onCloseCostSummaryDialog: function () {
       if (this._oCostSummaryDialog) {
         this._oCostSummaryDialog.close();
+      }
+    },
+
+    onRefreshCostSummaryDialog: function () {
+      if (this._oCostSummaryDialog) {
+        // Find the table within the dialog
+        // Structure: Dialog -> VBox -> Table
+        var aContent = this._oCostSummaryDialog.getContent();
+        if (aContent && aContent.length > 0) {
+          var oVBox = aContent[0];
+          if (oVBox && oVBox.getItems) {
+            var aItems = oVBox.getItems();
+            if (aItems && aItems.length > 0) {
+              var oTable = aItems[0];
+              if (oTable && oTable.isA("sap.ui.table.Table")) {
+                // Apply the same logic as CostSummaryTable
+                this.setCostSummaryTableFields(oTable);
+                this.calculateTableTotals(oTable);
+                sap.m.MessageToast.show("Values Updated");
+              }
+            }
+          }
+        }
       }
     }
 

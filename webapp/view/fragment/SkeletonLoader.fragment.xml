@@ -2,7 +2,6 @@
     <VBox class="sapUiMediumMargin">
         <!-- Header Skeleton -->
         <VBox class="sapUiSmallMarginBottom">
-            <Title text="Loading..." />
             <HBox class="sapUiTinyMarginTop">
                 <core:HTML content="&lt;div class='skeleton-line skeleton-line-short'&gt;&lt;/div&gt;" />
                 <core:HTML content="&lt;div class='skeleton-line skeleton-line-medium sapUiTinyMarginBegin'&gt;&lt;/div&gt;" />
