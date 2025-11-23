@@ -52,18 +52,6 @@
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjCostHeaderDataType/to_Valuation_oc">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
-            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjCostHeaderItemDataType/Delete_mc">
-                <Annotation Term="UI.Hidden"/>
-            </Annotations>
-            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjCostHeaderItemDataType/Update_mc">
-                <Annotation Term="UI.Hidden"/>
-            </Annotations>
-            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjCostValuationDataType/Delete_mc">
-                <Annotation Term="UI.Hidden"/>
-            </Annotations>
-            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjCostValuationDataType/Update_mc">
-                <Annotation Term="UI.Hidden"/>
-            </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjectCostDetailType/Delete_mc">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
@@ -115,10 +103,19 @@
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostType/p_date">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostItemType/p_project">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostItemType/p_date">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostPOType/p_project">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostPOType/p_date">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptCostDetailDataType/p_project">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.Z_I_ProjectStdVHType/ProjectInternalID">

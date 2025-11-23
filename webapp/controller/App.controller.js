@@ -1299,9 +1299,7 @@ sap.ui.define([
         oModel.setProperty(cxt.getPath() + '/CumulMarginToDate',
           this.convertToSAPCurrFormat(CumulMarginToDate));
 
-        var PreviousMargin = '0.0';
-        oModel.setProperty(cxt.getPath() + '/PreviousMargin',
-          this.convertToSAPCurrFormat(PreviousMargin));
+        var PreviousMargin = oHeaderItem.PreviousMargin;
 
         var CurrentMonthMargin = CumulMarginToDate - parseFloat(PreviousMargin);
 
