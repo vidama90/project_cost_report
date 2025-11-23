@@ -37,6 +37,8 @@ sap.ui.define([
             if (oBinding) {
               oBinding.attachEvent("dataReceived", () => {
                 this.refreshTable(UIControls.ValuationTable);
+              });
+            }
             this.refreshTable(UIControls.ValuationTable);
           }
         } catch (e) {
@@ -1266,7 +1268,7 @@ sap.ui.define([
         oModel.setProperty(cxt.getPath() + '/CurrentMonthValue',
           this.convertToSAPCurrFormat(oValuation.CurrentMonthValue));
 
-        var CumulMarginToDate = (CumulInternalValuation * ForecastFinalMargin_F);
+        var CumulMarginToDate = (CumulInternalValuation * ForecastFinalMargin_F)/100;
         if (isNaN(CumulMarginToDate))
           CumulMarginToDate = 0;
         oModel.setProperty(cxt.getPath() + '/CumulMarginToDate',
