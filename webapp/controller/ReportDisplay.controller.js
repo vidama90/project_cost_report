@@ -2,8 +2,12 @@ sap.ui.define([
     "com/atg/ppm/postfinrevenue/controller/App.controller",
     "sap/m/MessageBox",
     "sap/ui/core/BusyIndicator",
-    "sap/m/MessageToast"
-], (BaseController, MessageBox, BusyIndicator, MessageToast) => {
+    "sap/m/MessageToast",
+    "sap/m/TablePersoController",
+    "com/atg/ppm/postfinrevenue/controller/helper/TablePersonalizer",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], (BaseController, MessageBox, BusyIndicator, MessageToast, TablePersoController, TablePersonalizer, Filter, FilterOperator) => {
     "use strict";
     
     return BaseController.extend("com.atg.ppm.postfinrevenue.controller.ReportDisplay", {
@@ -46,6 +50,15 @@ sap.ui.define([
             this._setControlsReadOnly(true);
 
             this.bInputForecastFinalValue = true; // Flag to control input field behavior
+
+            // Activate initial load gating: suppress calculations except footers
+            this._initialLoadActive = true;
+            
+            // Initialize table personalizers
+            this._oHITablePersoController = TablePersonalizer.create(this.UIControls.HeaderItemTable);
+            this._oValuationTablePersoController = TablePersonalizer.create(this.UIControls.ValuationTable);
+            this._oCostDetailTablePersoController = TablePersonalizer.create(this.UIControls.CostSummaryTable);
+            this._oCostItemTablePersoController = TablePersonalizer.create(this.UIControls.CostItemTable);
         },
         
         /**
@@ -164,6 +177,9 @@ sap.ui.define([
                 ReportNumber: this.sReportId
             };
             
+            // Disable gating so calculations run from now on
+            this.disableInitialLoadGating();
+
             // Re-initialize report in display mode
             this.initReport("/ProjectCostRept", aFilters, this.UIControls, this.Models, oSelection, "03");
             

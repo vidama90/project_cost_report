@@ -52,6 +52,9 @@ sap.ui.define([
             
             this.bInputForecastFinalValue = true; // Flag to control input field behavior
 
+            // Activate initial load gating for update mode
+            this._initialLoadActive = true;
+
 
         },
         
@@ -101,6 +104,9 @@ sap.ui.define([
         
         // Copy methods from ProjectCostReport.controller.js for change functionality
         onClickRefresh: function() {
+
+               // Disable gating before recalculations
+               this.disableInitialLoadGating();
 
              this.setHeaderSmartFormProperties(this.UIControls.HeaderSmartForm);
 
@@ -155,6 +161,8 @@ sap.ui.define([
         },
         
         onPressUpdateReport: function() {
+            // User initiated update; allow calculations
+            this.disableInitialLoadGating();
             this.updateReport(this.UIControls, this.Models, '');
         }
         

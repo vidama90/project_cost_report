@@ -14,6 +14,10 @@ sap.ui.define([
     onAfterRendering() {
       // Get UI controls if they exist
       var UIControls = this.UIControls;
+      // Ensure initial load flag defaults to false if not set
+      if (this._initialLoadActive === undefined) {
+        this._initialLoadActive = false;
+      }
 
       if (UIControls) {
         // Refresh each table after rendering to ensure proper calculations and formatting
@@ -74,6 +78,27 @@ sap.ui.define([
           console.warn("Could not set up CostItemTable refresh:", e);
         }
       }
+    },
+
+    // Helper: determines if we should skip non-footer calculations during initial load
+    _shouldSkipInitialCalculations() {
+      if (!this._initialLoadActive) {
+        return false;
+      }
+      var oView = this.getView();
+      if (!oView) return false;
+      var oVC = oView.getModel('ViewControl');
+      if (!oVC) return false;
+      var isCreate = !!oVC.getProperty('/Mode/IsCreate');
+      var isUpdate = !!oVC.getProperty('/Mode/IsUpdate');
+      var isDisplay = !!oVC.getProperty('/Mode/IsDisplay');
+      // Skip when NOT create and either update or display (read-only) modes on initial load
+      return !isCreate && (isUpdate || isDisplay);
+    },
+
+    // Public method to disable initial load gating (called by specialized controllers after user action)
+    disableInitialLoadGating() {
+      this._initialLoadActive = false;
     },
 
     getResourceBundle() {
@@ -1574,58 +1599,55 @@ sap.ui.define([
 
           var oTable = that.getCostTable(UIControls);
           if (oTable === UIControls.CostSummaryTable) {
-            that.getModel().read("/ActualCost(p_project='" +
-              that.Project + "',p_date='" +
-              that.formatDateToYYYYmmDD(that.CutOffDate) + "')/Set", {
-              success: function (oData) {
-
-                if (oData) {
-                  that.setActualPOCost(
-                    that.getCostTable(UIControls),
-                    oData.results
-                  );
-
-                  // Hide skeleton screen
+            if (!that._shouldSkipInitialCalculations()) {
+              that.getModel().read("/ActualCost(p_project='" +
+                that.Project + "',p_date='" +
+                that.formatDateToYYYYmmDD(that.CutOffDate) + "')/Set", {
+                success: function (oData) {
+                  if (oData) {
+                    that.setActualPOCost(
+                      that.getCostTable(UIControls),
+                      oData.results
+                    );
+                    that.showSkeletonScreen(false);
+                  }
+                  that.calculateTableTotals(oTable);
+                },
+                error: function () {
                   that.showSkeletonScreen(false);
-                  //that.refreshTable(that.getCostTable(UIControls));
-
                 }
-
-                that.calculateTableTotals(oTable);
-
-              },
-              error: function (oError) {
-                // Hide skeleton screen on error
-                that.showSkeletonScreen(false);
-              }
-            });
+              });
+            } else {
+              // Initial load gating: still compute hierarchy level 6/7 totals
+              that.calculateTableTotals(oTable);
+              that.showSkeletonScreen(false);
+            }
           }
 
           if (oTable === UIControls.CostItemTable) {
-            that.getModel().read("/ActualCostItem(p_project='" +
-              that.Project + "',p_date='" +
-              that.formatDateToYYYYmmDD(that.CutOffDate) + "')/Set", {
-              success: function (oData) {
-
-                if (oData) {
-                  that.setActualCostItem(
-                    that.getCostTable(UIControls),
-                    oData.results
-                  );
-
-                  // Hide skeleton screen
+            if (!that._shouldSkipInitialCalculations()) {
+              that.getModel().read("/ActualCostItem(p_project='" +
+                that.Project + "',p_date='" +
+                that.formatDateToYYYYmmDD(that.CutOffDate) + "')/Set", {
+                success: function (oData) {
+                  if (oData) {
+                    that.setActualCostItem(
+                      that.getCostTable(UIControls),
+                      oData.results
+                    );
+                    that.showSkeletonScreen(false);
+                    that.calculateTableTotals(oTable);
+                  }
+                },
+                error: function () {
                   that.showSkeletonScreen(false);
-
-                  that.calculateTableTotals(oTable);
-                  //that.refreshTable(that.getCostTable(UIControls));
-
                 }
-              },
-              error: function (oError) {
-                // Hide skeleton screen on error
-                that.showSkeletonScreen(false);
-              }
-            });
+              });
+            } else {
+              // Initial load gating: still compute hierarchy level 6/7 totals
+              that.calculateTableTotals(oTable);
+              that.showSkeletonScreen(false);
+            }
           }
         }
       };
@@ -1973,26 +1995,38 @@ sap.ui.define([
       //UIControls.HeaderItemTable.getColumns()[0].setFooter(new sap.m.Label({ text: 100 }));
 
       // UIControls.ValuationTable.getColumns()[0].setFooter(new sap.m.Label({ text: 100 }));
+      var skip = this._shouldSkipInitialCalculations();
       if (oTable === UIControls.CostSummaryTable) {
-        this.setCostSummaryTableFields(UIControls.CostSummaryTable);
-        this.calculateTableTotals(UIControls.CostSummaryTable, property);
-
+        if (!skip) {
+          this.setCostSummaryTableFields(UIControls.CostSummaryTable);
+          this.calculateTableTotals(UIControls.CostSummaryTable, property);
+        } else {
+          // Still compute level 6/7 totals
+          this.calculateTableTotals(UIControls.CostSummaryTable, property);
+        }
       }
       if (oTable === UIControls.CostItemTable) {
-        this.setCostItemTableFields(UIControls.CostItemTable);
-        this.calculateTableTotals(UIControls.CostItemTable, property);
+        if (!skip) {
+          this.setCostItemTableFields(UIControls.CostItemTable);
+          this.calculateTableTotals(UIControls.CostItemTable, property);
+        } else {
+          // Still compute level 6/7 totals
+          this.calculateTableTotals(UIControls.CostItemTable, property);
+        }
       }
       if (oTable === UIControls.HeaderItemTable) {
-
-        this.setHeaderItemTableFields(UIControls.HeaderSmartForm, UIControls.HeaderItemTable, UIControls.ValuationTable, this.getCostTable(UIControls));
-        this.generateTotalFooter(UIControls.HeaderItemTable);
-        this.formatHeaderItemTable(UIControls.HeaderItemTable);
+        if (!skip) {
+          this.setHeaderItemTableFields(UIControls.HeaderSmartForm, UIControls.HeaderItemTable, UIControls.ValuationTable, this.getCostTable(UIControls));
+          this.formatHeaderItemTable(UIControls.HeaderItemTable);
+        }
+        this.generateTotalFooter(UIControls.HeaderItemTable); // always allowed
       }
       if (oTable === UIControls.ValuationTable) {
-
-        this.setValuationTableFields(UIControls.ValuationTable);
-        this.generateTotalFooter(UIControls.ValuationTable);
-        this.formatValuationTable(UIControls.ValuationTable);
+        if (!skip) {
+          this.setValuationTableFields(UIControls.ValuationTable);
+          this.formatValuationTable(UIControls.ValuationTable);
+        }
+        this.generateTotalFooter(UIControls.ValuationTable); // always allowed
       }
     },
 
