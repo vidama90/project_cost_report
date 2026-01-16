@@ -38,6 +38,11 @@ sap.ui.define([
             // Set create mode
             this.Models.ViewControl.setProperty('/Mode/IsCreate', true);
             this.Models.ViewControl.setProperty('/Mode/IsUpdate', false);
+            this.Models.ViewControl.setProperty('/Mode/IsEditable', true);
+            
+            // Make sections visible immediately for create screen (no selection screen)
+            this.Models.ViewControl.setProperty('/Sections/IsVisible', true);
+            this.Models.ViewControl.setProperty('/SelectionScreen/IsVisible', false);
             
             // Attach to route matched event
             var oRouter = this.getOwnerComponent().getRouter();
@@ -48,6 +53,9 @@ sap.ui.define([
             this._oValuationTablePersoController = TablePersonalizer.create(this.UIControls.ValuationTable);
             this._oCostDetailTablePersoController = TablePersonalizer.create(this.UIControls.CostSummaryTable);
             this._oCostItemTablePersoController = TablePersonalizer.create(this.UIControls.CostItemTable);
+            
+            // Initialize JSON model for cost detail data (same approach as Change scenario)
+            this._oCostDetailModel = new JSONModel({ items: [] });
         },
         
         _onCreateMatched: function(oEvent) {
@@ -81,7 +89,10 @@ sap.ui.define([
                             // Reset the flag and redirect to the created report
                             oGlobalModel.setProperty("/reportJustCreated", false);
                             if (sLastCreatedReportId) {
-                                var sCutOffDate = this.formatDateForURL(this.CutOffDate || new Date());
+                                // Get CutOffDate from header context if available, otherwise use current date
+                                var oHeaderContext = this.UIControls.HeaderSmartForm ? this.UIControls.HeaderSmartForm.getBindingContext() : null;
+                                var dCutOffDate = oHeaderContext ? oHeaderContext.getObject().CutOffDate : new Date();
+                                var sCutOffDate = this.formatDateForURL(dCutOffDate || new Date());
                                 oRouter.navTo("change", {
                                     reportId: sLastCreatedReportId,
                                     cutOffDate: sCutOffDate
@@ -143,6 +154,11 @@ sap.ui.define([
             
             // Set the form values with the passed parameters
             this._setInitialFormValues(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+            
+            // Bind Cost Summary table to parameterized entity for better performance
+            setTimeout(() => {
+                this._bindCostDetailParameterized(sProjectId);
+            }, 1000);
         },
         
         /**
@@ -201,19 +217,20 @@ sap.ui.define([
 
             this.setHeaderSmartFormProperties(this.UIControls.HeaderSmartForm);
 
-            this.setHeaderItemTableFields(this.UIControls.HeaderSmartForm, this.UIControls.HeaderItemTable, this.UIControls.ValuationTable, this.getCostTable(this.UIControls));
-            this.generateTotalFooter(this.UIControls.HeaderItemTable);
-            this.formatHeaderItemTable(this.UIControls.HeaderItemTable);
-
-            this.setValuationTableFields(this.UIControls.ValuationTable);
-            this.generateTotalFooter(this.UIControls.ValuationTable);
-            this.formatValuationTable(this.UIControls.ValuationTable);
-
+            // Update sequence: Cost Summary first, then Valuation, then Header Item
             this.setCostSummaryTableFields(this.UIControls.CostSummaryTable);
             this.calculateTableTotals(this.UIControls.CostSummaryTable);
 
             this.setCostItemTableFields(this.UIControls.CostItemTable);
             this.calculateTableTotals(this.UIControls.CostItemTable);
+
+            this.setValuationTableFields(this.UIControls.ValuationTable);
+            this.generateTotalFooter(this.UIControls.ValuationTable);
+            this.formatValuationTable(this.UIControls.ValuationTable);
+
+            this.setHeaderItemTableFields(this.UIControls.HeaderSmartForm, this.UIControls.HeaderItemTable, this.UIControls.ValuationTable, this.getCostTable(this.UIControls));
+            this.generateTotalFooter(this.UIControls.HeaderItemTable);
+            this.formatHeaderItemTable(this.UIControls.HeaderItemTable);
 
             MessageToast.show("Values Updated");
         },
@@ -269,6 +286,109 @@ sap.ui.define([
         
         onPressCreateReport: function() {
             this.createReport(this.UIControls, this.Models);
+        },
+        
+        /**
+         * Bind Cost Summary table to parameterized entity using JSON model approach
+         * This is consistent with the Change scenario for better full-screen dialog support
+         * Gets CutOffDate from HeaderSmartForm binding context instead of controller property
+         * @param {string} sProjectId - Project External ID
+         * @private
+         */
+        _bindCostDetailParameterized: function(sProjectId) {
+            var that = this;
+            
+            if (!sProjectId) {
+                console.warn("ProjectExternalID not available for parameterized binding");
+                return;
+            }
+            
+            var oCostSummaryTable = this.UIControls.CostSummaryTable;
+            var oCostItemTable = this.UIControls.CostItemTable;
+            
+            if (!oCostSummaryTable) {
+                console.warn("Cost Summary Table not found");
+                return;
+            }
+            
+            try {
+                // Get CutOffDate from header context instead of controller property
+                var oHeaderContext = this.UIControls.HeaderSmartForm.getBindingContext();
+                var dCutOffDate = oHeaderContext ? oHeaderContext.getObject().CutOffDate : new Date();
+                
+                // Construct parameterized entity path
+                // Entity: P_RptCostDetailData requires parameters p_project and p_cutoffdate
+                var sCutOffDateFormatted = this.formatDateToYYYYmmDD(dCutOffDate);
+                var sParameterizedPath = "/P_RptCostDetailData(p_project='" + encodeURIComponent(sProjectId) + "',p_cutoffdate='" + sCutOffDateFormatted + "')/Set";
+                
+                console.log("Reading from parameterized path: " + sParameterizedPath);
+                
+                // Read data from parameterized entity (FAST)
+                this.getModel().read(sParameterizedPath, {
+                    success: function(oCostData) {
+                        console.log("Parameterized entity returned " + oCostData.results.length + " records");
+                        
+                        // Set data to JSON model
+                        that._oCostDetailModel.setData({ items: oCostData.results });
+                        
+                        // Determine which table is visible and bind to JSON model
+                        if (oCostSummaryTable && oCostSummaryTable.getVisible()) {
+                            // Unbind from OData first
+                            oCostSummaryTable.unbindRows();
+                            
+                            // Set the JSON model as the DEFAULT model on the table (no name)
+                            // This allows existing column bindings like {WBSLevel2Descr} to work
+                            oCostSummaryTable.setModel(that._oCostDetailModel);
+                            
+                            // Bind rows to JSON model path
+                            oCostSummaryTable.bindRows({
+                                path: "/items",
+                                sorter: new sap.ui.model.Sorter('counter', false)
+                            });
+                            
+                            console.log("Cost Summary table bound to JSON model with " + oCostData.results.length + " items");
+                            
+                            // Calculate totals after data is set
+                            setTimeout(function() {
+                                that.calculateTableTotals(oCostSummaryTable);
+                            }, 100);
+                        }
+                        
+                        if (oCostItemTable && oCostItemTable.getVisible()) {
+                            // Unbind from OData first
+                            oCostItemTable.unbindRows();
+                            
+                            // Set the JSON model as the DEFAULT model on the table (no name)
+                            oCostItemTable.setModel(that._oCostDetailModel);
+                            
+                            // Bind rows to JSON model path
+                            oCostItemTable.bindRows({
+                                path: "/items",
+                                sorter: new sap.ui.model.Sorter('counter', false)
+                            });
+                            
+                            console.log("Cost Item table bound to JSON model with " + oCostData.results.length + " items");
+                            
+                            // Calculate totals after data is set
+                            setTimeout(function() {
+                                that.calculateTableTotals(oCostItemTable);
+                            }, 100);
+                        }
+                        
+                        that.showSkeletonScreen(false);
+                    },
+                    error: function(oError) {
+                        console.error("Error reading from parameterized entity:", oError);
+                        that.showSkeletonScreen(false);
+                        that.showError2("Failed to load cost details: " + that.getTextFromOdataError(oError));
+                    }
+                });
+                
+                console.log("Cost Summary table binding initiated for: " + sParameterizedPath);
+            } catch (error) {
+                console.error("Error binding to parameterized entity:", error);
+                // Fallback: Keep existing binding if parameterized binding fails
+            }
         },
         
         // Include other methods from ProjectCostReport.controller.js needed for create functionality

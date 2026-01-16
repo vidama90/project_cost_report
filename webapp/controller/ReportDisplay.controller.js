@@ -68,9 +68,18 @@ sap.ui.define([
         _onDisplayMatched: function(oEvent) {
             var oArgs = oEvent.getParameter("arguments");
             var sReportId = oArgs.reportId;
+            var sCutOffDate = oArgs.cutOffDate;
             
-            // Store report ID
+            // Store report ID and cutoff date
             this.sReportId = sReportId;
+            this.sCutOffDate = sCutOffDate;
+            
+            // Parse the cutoff date
+            var dCutOffDate = null;
+            if (sCutOffDate) {
+                dCutOffDate = new Date(sCutOffDate);
+            }
+            this.CutOffDate = dCutOffDate;
             
             // Set up filters for data loading
             var oFilter = new sap.ui.model.Filter("ReportNumber", sap.ui.model.FilterOperator.EQ, sReportId);
@@ -80,7 +89,8 @@ sap.ui.define([
             
             // Create a minimal selection object with available information
             var oSelection = {
-                ReportNumber: sReportId
+                ReportNumber: sReportId,
+                CutOffDate: dCutOffDate
             };
             
             // Initialize the report in display mode
@@ -88,6 +98,94 @@ sap.ui.define([
             
             // Apply read-only styling
             this.enableDisplayMode(this.Models);
+        },
+        
+        /**
+         * Override initSuccess to bind cost detail after data is loaded
+         * This ensures the ViewControl model properties are set before we try to bind tables
+         */
+        initSuccess: function(Models) {
+            // Call parent initSuccess
+            this.getModel().resetChanges();
+            Models.ViewControl.setProperty("/Sections/IsVisible", true);
+            Models.ViewControl.setProperty("/SelectionScreen/IsVisible", false);
+            this.ensureSmartFormContentLoaded();
+            
+            // Now bind cost detail with parameterized entity
+            this._bindCostDetailParameterized();
+        },
+        
+        /**
+         * Bind Cost Detail table to parameterized entity for display
+         * Uses P_RptProjectCostDetail for reading data in display mode
+         * Uses same binding approach as update scenario (only p_pcrnum parameter)
+         * Gets values from HeaderSmartForm binding context instead of controller properties
+         * @private
+         */
+        _bindCostDetailParameterized: function() {
+            var that = this;
+            
+            // Get report number from HeaderSmartForm binding context instead of controller property
+            var oHeaderContext = this.UIControls.HeaderSmartForm.getBindingContext();
+            if (!oHeaderContext) {
+                console.warn("Header context not available for parameterized binding");
+                return;
+            }
+            
+            var oHeaderData = oHeaderContext.getObject();
+            var sReportNumber = oHeaderData.ReportNumber;
+            var sProjectId = oHeaderData.ProjectExternalID || oHeaderData.ProjectNumber || "";
+            
+            if (!sReportNumber) {
+                console.warn("Report number not available in context for parameterized binding");
+                return;
+            }
+            
+            var oCostSummaryTable = this.UIControls.CostSummaryTable;
+            var oCostItemTable = this.UIControls.CostItemTable;
+            
+            // Check visibility from ViewControl model instead of runtime getVisible()
+            var bShowCostSummary = this.Models.ViewControl.getProperty('/Tables/ShowCostSummary');
+            var bShowCostItem = this.Models.ViewControl.getProperty('/Tables/ShowCostItem');
+            
+            console.log("Binding cost detail for Display - Report: " + sReportNumber + ", Project: " + sProjectId);
+            console.log("ShowCostSummary: " + bShowCostSummary + ", ShowCostItem: " + bShowCostItem);
+            
+            // Construct parameterized entity path for FAST read
+            // P_RptProjectCostDetail only needs p_pcrnum (report number) parameter - same as update scenario
+            var sParameterizedPath = "/P_RptProjectCostDetail(p_pcrnum='" + 
+                encodeURIComponent(sReportNumber) + "')/Set";
+            
+            console.log("Reading from parameterized path: " + sParameterizedPath);
+            
+            // Determine which table is visible and bind it
+            if (oCostSummaryTable && bShowCostSummary) {
+                oCostSummaryTable.bindRows({
+                    path: sParameterizedPath,
+                    sorter: new sap.ui.model.Sorter('counter', false),
+                    events: {
+                        dataReceived: function() {
+                            that.calculateTableTotals(oCostSummaryTable);
+                            that.showSkeletonScreen(false);
+                        }
+                    }
+                });
+                console.log("Cost Summary table bound to parameterized entity: " + sParameterizedPath);
+            }
+            
+            if (oCostItemTable && bShowCostItem) {
+                oCostItemTable.bindRows({
+                    path: sParameterizedPath,
+                    sorter: new sap.ui.model.Sorter('counter', false),
+                    events: {
+                        dataReceived: function() {
+                            that.calculateTableTotals(oCostItemTable);
+                            that.showSkeletonScreen(false);
+                        }
+                    }
+                });
+                console.log("Cost Item table bound to parameterized entity: " + sParameterizedPath);
+            }
         },
         
         /**
@@ -161,20 +259,31 @@ sap.ui.define([
         
         /**
          * Refresh report data
+         * Gets report number from HeaderSmartForm binding context instead of controller property
          */
         onClickRefresh: function() {
-            if (!this.sReportId) {
+            // Get report number from context instead of controller property
+            var oHeaderContext = this.UIControls.HeaderSmartForm.getBindingContext();
+            if (!oHeaderContext) {
+                console.warn("Header context not available for refresh");
+                return;
+            }
+            
+            var oHeaderData = oHeaderContext.getObject();
+            var sReportNumber = oHeaderData.ReportNumber;
+            
+            if (!sReportNumber) {
                 return;
             }
             
             BusyIndicator.show(0);
             
-            var oFilter = new sap.ui.model.Filter("ReportNumber", sap.ui.model.FilterOperator.EQ, this.sReportId);
+            var oFilter = new sap.ui.model.Filter("ReportNumber", sap.ui.model.FilterOperator.EQ, sReportNumber);
             var aFilters = [oFilter];
             
             // Create a minimal selection object with available information
             var oSelection = {
-                ReportNumber: this.sReportId
+                ReportNumber: sReportNumber
             };
             
             // Disable gating so calculations run from now on
@@ -188,6 +297,7 @@ sap.ui.define([
         
         /**
          * Customize export to Excel in display mode
+         * Gets report number from HeaderSmartForm binding context for filename
          */
         onExportToExcel: function() {
             // Implement Excel export functionality
@@ -195,6 +305,10 @@ sap.ui.define([
             if (!oTable) {
                 return;
             }
+            
+            // Get report number from context for filename
+            var oHeaderContext = this.UIControls.HeaderSmartForm.getBindingContext();
+            var sReportNumber = oHeaderContext ? oHeaderContext.getObject().ReportNumber : "Unknown";
             
             sap.ui.require(["sap/ui/export/Spreadsheet"], function(Spreadsheet) {
                 var oSettings = {
@@ -209,7 +323,7 @@ sap.ui.define([
                     dataSource: oTable.getBinding("rows").getContexts().map(function(oContext) {
                         return oContext.getObject();
                     }),
-                    fileName: 'ProjectCostReport_' + this.sReportId + '.xlsx'
+                    fileName: 'ProjectCostReport_' + sReportNumber + '.xlsx'
                 };
                 
                 var oSheet = new Spreadsheet(oSettings);

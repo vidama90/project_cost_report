@@ -22,11 +22,16 @@
                 <Label text="Report Status" />
             </smartForm:label>
             <HBox alignItems="Center">
-                <smartField:SmartField
-                    editable="{ViewControl>/SmartField/ReportStatus}"
-                    id="ReportStatus"
-                    value="{ReportStatus}"
-                />
+                <Select
+                    id="ReportStatusSelect"
+                    selectedKey="{ReportStatus}"
+                    enabled="{ViewControl>/SmartField/ReportStatus}"
+                    forceSelection="false"
+                >
+                    <core:Item key="1" text="CREATE (1)" />
+                    <core:Item key="5" text="REJECTED (5)" />
+                    <core:Item key="6" text="DELETED (6)" />
+                </Select>
                 <core:Icon 
                     src="{path: 'ReportStatus', formatter: '.formatStatusIcon'}" 
                     color="{path: 'ReportStatus', formatter: '.formatStatusColor'}"
@@ -100,6 +105,7 @@ pattern: 'yyyy MMMM'
                     value="{MainContractTenderValue}"
                     editable="{ViewControl>/SmartField/MainContractTenderValue}"
                     width="15rem"
+                    change="onCurrencyInputChange"
                 />
                 <Text
                     text="{TransactionCurrency}"
@@ -116,6 +122,7 @@ pattern: 'yyyy MMMM'
                     id="TurnkeyTenderValue"
                     value="{TurnkeyTenderValue}"
                     width="15rem"
+                    change="onCurrencyInputChange"
                 />
                 <Text
                     text="{TransactionCurrency}"
@@ -132,6 +139,7 @@ pattern: 'yyyy MMMM'
                     id="TenderMarginOnRevenue"
                     value="{TenderMarginOnRevenue}"
                     width="15rem"
+                    change="onCurrencyInputChange"
                 />
                 <Text
                     text="{TransactionCurrency}"
@@ -148,6 +156,7 @@ pattern: 'yyyy MMMM'
                     id="JoineryTenderValue"
                     value="{JoineryTenderValue}"
                     width="15rem"
+                    change="onCurrencyInputChange"
                 />
                 <Text
                     text="{TransactionCurrency}"
@@ -252,6 +261,7 @@ pattern: 'yyyy MMMM'
                     id="MainContractCurrentSell"
                     value="{MainContractCurrentSell}"
                     width="15rem"
+                    change="onCurrencyInputChange"
                 />
                 <Text
                     text="{TransactionCurrency}"
@@ -268,6 +278,7 @@ pattern: 'yyyy MMMM'
                     id="AprvVariationCurrentSell"
                     value="{AprvVariationCurrentSell}"
                     changeModelValue=".calcProjFinalAccountCurrentSell"
+                    change="onCurrencyInputChange"
                     width="15rem"
                 />
                 
@@ -286,6 +297,7 @@ pattern: 'yyyy MMMM'
                 id="UnaprvVariationCurrentSell"
                 value="{UnaprvVariationCurrentSell}"
                 changeModelValue=".calcProjFinalAccountCurrentSell"
+                change="onCurrencyInputChange"
                 width="15rem"
             />
                 
@@ -303,8 +315,8 @@ pattern: 'yyyy MMMM'
                 editable="{ViewControl>/SmartField/ProjFinalAccountCurrentSell}"
                 id="ProjFinalAccountCurrentSell"
                 value="{ProjFinalAccountCurrentSell}"
+                change="onCurrencyInputChange"
                 width="15rem"
-                
             />
                 
                 <Text
@@ -321,6 +333,7 @@ pattern: 'yyyy MMMM'
                 editable="{ViewControl>/SmartField/PotFinalAccountCurrentSell}"
                 id="PotFinalAccountCurrentSell"
                 value="{PotFinalAccountCurrentSell}"
+                change="onCurrencyInputChange"
                 width="15rem"
             />
                 

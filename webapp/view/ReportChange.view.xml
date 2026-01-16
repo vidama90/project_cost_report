@@ -5,12 +5,9 @@
     xmlns:core="sap.ui.core"
     xmlns:uxap="sap.uxap">
     
-    <Page id="changePage" showNavButton="true" navButtonPress=".onNavBack">
+    <Page id="changePage">
         <customHeader>
             <Bar>
-                <contentLeft>
-                    <Button icon="sap-icon://nav-back" press=".onNavBack" type="Transparent"/>
-                </contentLeft>
                 <contentMiddle>
                     <Title text="{i18n>change}" level="H1" class="sapUiNoMargin"/>
                 </contentMiddle>
@@ -23,7 +20,9 @@
             <uxap:ObjectPageLayout
                 id="ObjectPageLayout"
                 upperCaseAnchorBar="false"
-                showFooter="true">
+                showFooter="true"
+                alwaysShowContentHeader="true"
+                useTwoColumnsForLargeScreen="true">
                 
                 <!-- <uxap:headerTitle>
                     <uxap:ObjectPageDynamicHeaderTitle>

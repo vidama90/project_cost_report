@@ -18,27 +18,19 @@
                 selectionMode="None"
                 enableColumnFreeze="true"
                 fixedColumnCount="3"
-                visibleRowCount="14"
+                fixedBottomRowCount="1"
+                visibleRowCount="20"
                 enableColumnReordering="true"
                 columnHeaderHeight="auto"
                 class="mainTable sapUiSizeCompact"
-                rows="{
-                    path: 'to_CostDetail',
-                    parameters: {
-                        groupId: 'costChanges'
-                    },
-                    sorter: {
-                        path: 'counter',
-                        descending: false
-                    }
-                }"
+            
             >
                 <table:rowSettingsTemplate>
                     <table:RowSettings
                         highlight="{= 
                             ${HierarchyLevel}===2 ? 'Information' : 
                             ${HierarchyLevel}===3 ? 'Warning' : 
-                            ${HierarchyLevel}===4 ? 'Success' : 
+                            ${HierarchyLevel}===4||${HierarchyLevel}===5 ? 'Success' : 
                             'None'
                         }"
                     />
@@ -48,7 +40,7 @@
                     <table:Column>
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/WBSLevel2Descr/@sap:label}"
+                                text="WBS Level 2"
                                 textAlign="Left"
                             />
                         </table:label>
@@ -80,7 +72,7 @@
                     <table:Column>
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/WBSLevel3Descr/@sap:label}"
+                                text="WBS Level 3"
                                 textAlign="Left"
                             />
                         </table:label>
@@ -110,7 +102,7 @@
                     <table:Column>
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/WBSLevel4Descr/@sap:label}"
+                                text="WBS Level 4"
                                 textAlign="Left"
                             />
                         </table:label>
@@ -140,7 +132,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/TenderCost/@sap:label}"
+                                text="Tender Cost"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -173,7 +165,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/RevisedBudget/@sap:label}"
+                                text="Revised Budget"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -206,7 +198,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/PotentialFinalAccountCost/@sap:label}"
+                                text="Pot. Final Account Cost"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -247,7 +239,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/ActualCostPO/@sap:label}"
+                                text="Actual Cost PO"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -280,7 +272,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/ActualCostSO/@sap:label}"
+                                text="Actual Cost SO"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -313,7 +305,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/CommitedCostPO/@sap:label}"
+                                text="Committed Cost PO"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -346,7 +338,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/TotalPOCost/@sap:label}"
+                                text="Total PO Cost"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -379,7 +371,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/CostToComplete/@sap:label}"
+                                text="Cost to Complete"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -420,7 +412,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/ProjectedFinalCost/@sap:label}"
+                                text="Projected Final Cost"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -453,7 +445,7 @@
                     <table:Column width="10rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/Variance/@sap:label}"
+                                text="Variance"
                                 textAlign="Right"
                             />
                         </table:label>
@@ -486,7 +478,7 @@
                     <table:Column width="12rem">
                         <table:label>
                             <Label
-                                text="{/#ProjectCostSummaryDataType/Remarks/@sap:label}"
+                                text="Remarks"
                                 textAlign="Left"
                             />
                         </table:label>

@@ -97,6 +97,15 @@
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjectCostValuationType/Update_mc">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptCostDetailDataType/p_project">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptCostDetailDataType/p_cutoffdate">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptProjectCostDetailType/p_pcrnum">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostType/p_project">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
@@ -113,9 +122,6 @@
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostPOType/p_date">
-                <Annotation Term="UI.Hidden"/>
-            </Annotations>
-            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptCostDetailDataType/p_project">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.Z_I_ProjectStdVHType/ProjectInternalID">

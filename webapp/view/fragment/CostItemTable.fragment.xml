@@ -53,7 +53,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/WBSLevel2Descr/@sap:label}"
+                            text="{i18n>colWBSLevel2}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -85,7 +85,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/WBSLevel3Descr/@sap:label}"
+                            text="{i18n>colWBSLevel3}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -115,7 +115,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/WBSLevel4Descr/@sap:label}"
+                            text="{i18n>colWBSLevel4}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -146,7 +146,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/TenderCost/@sap:label}"
+                            text="{i18n>colTenderCost}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -179,7 +179,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/RevisedBudget/@sap:label}"
+                            text="{i18n>colRevisedBudget}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -213,7 +213,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/PotentialFinalAccountCost/@sap:label}"
+                            text="{i18n>colPotentialFinalCost}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -254,7 +254,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/CommitedCostPO/@sap:label}"
+                            text="{i18n>colCommitedCostPO}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -287,7 +287,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/TotalPOCost/@sap:label}"
+                            text="{i18n>colTotalPOCost}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -321,7 +321,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/CostToComplete/@sap:label}"
+                            text="{i18n>colCostToComplete}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -363,7 +363,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/Variance/@sap:label}"
+                            text="{i18n>colVariance}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -396,7 +396,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/Remarks/@sap:label}"
+                            text="{i18n>colRemarks}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -431,7 +431,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/Item/@sap:label}"
+                            text="{i18n>colItem}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -448,7 +448,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/ItemText/@sap:label}"
+                            text="{i18n>colItemText}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -465,7 +465,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/PONumber/@sap:label}"
+                            text="{i18n>colPONumber}"
                             textAlign="Left"
                         />
                     </table:label>
@@ -482,7 +482,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/POValue/@sap:label}"
+                            text="{i18n>colPOValue}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -515,7 +515,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/ActualCostPO/@sap:label}"
+                            text="{i18n>colActualCostPO}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -548,7 +548,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/ActualCostSO/@sap:label}"
+                            text="{i18n>colActualCostSO}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -581,7 +581,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/UnderCost/@sap:label}"
+                            text="{i18n>colUnderCost}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -624,7 +624,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/OverCost/@sap:label}"
+                            text="{i18n>colOverCost}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -667,7 +667,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/ProjectedFinalCost/@sap:label}"
+                            text="{i18n>colProjectedFinalCost}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -700,7 +700,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/PreviousTotalLiability/@sap:label}"
+                            text="{i18n>colPreviousTotalLiability}"
                             textAlign="Right"
                         />
                     </table:label>
@@ -743,7 +743,7 @@
                 >
                     <table:label>
                         <Label
-                            text="{/#ProjectCostItemDataType/MonthsMovement/@sap:label}"
+                            text="{i18n>colMonthsMovement}"
                             textAlign="Right"
                         />
                     </table:label>

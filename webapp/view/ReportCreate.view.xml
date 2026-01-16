@@ -5,35 +5,14 @@
     xmlns:core="sap.ui.core"
     xmlns:uxap="sap.uxap">
     
-    <Page id="createPage" showNavButton="true" navButtonPress=".onNavBack">
-        <customHeader>
-            <Bar>
-                <contentLeft>
-                    <Button icon="sap-icon://nav-back" press=".onNavBack" type="Transparent"/>
-                </contentLeft>
-                <contentMiddle>
-                    <Title text="{i18n>create}" level="H1" class="sapUiNoMargin"/>
-                </contentMiddle>
-                <contentRight>
-                    <core:Icon src="sap-icon://create" color="#0070f2" size="1.25rem"/>
-                </contentRight>
-            </Bar>
-        </customHeader>
+    <Page id="createPage" title="{i18n>create}">
         <content>
             <uxap:ObjectPageLayout
                 id="ObjectPageLayout"
                 upperCaseAnchorBar="false"
-                showFooter="true">
-                
-                <!-- <uxap:headerTitle>
-                    <uxap:ObjectPageDynamicHeaderTitle>
-                        <uxap:expandedHeading>
-                            <HBox>
-                                <Title text="{i18n>create}" wrapping="true"/>
-                            </HBox>
-                        </uxap:expandedHeading>
-                    </uxap:ObjectPageDynamicHeaderTitle>
-                </uxap:headerTitle> -->
+                showFooter="true"
+                alwaysShowContentHeader="true"
+                useTwoColumnsForLargeScreen="true">
                 
                 <uxap:sections>
                     <uxap:ObjectPageSection id="Section1" titleUppercase="false" title="{i18n>section1}">

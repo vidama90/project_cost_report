@@ -177,37 +177,27 @@ sap.ui.define([
       return oViewControlModel;
     },
     showError2(text) {
-
-      MessageBox.error(text
-        , {
-          icon: MessageBox.Icon.Error,
-          title: "Error",
-        });
+      MessageBox.error(text, {
+        title: "Error"
+      });
     },
     showError(code) {
       var text = this.getResourceBundle().getText(code);
-      MessageBox.error(text
-        , {
-          icon: MessageBox.Icon.Error,
-          title: "Error",
-        });
+      MessageBox.error(text, {
+        title: "Error"
+      });
     },
     showSuccess(code) {
       var text = this.getResourceBundle().getText(code);
-      MessageBox.success(text
-        , {
-          icon: MessageBox.Icon.Error,
-          title: "Success",
-        });
+      MessageBox.success(text, {
+        title: "Success"
+      });
     },
     showInformation(code) {
       var text = this.getResourceBundle().getText(code);
-      MessageBox.information(text
-        , {
-          icon: MessageBox.Icon.Info,
-          title: "Info",
-        });
-
+      MessageBox.information(text, {
+        title: "Information"
+      });
     },
     getUIControlls() {
       return {
@@ -528,7 +518,7 @@ sap.ui.define([
         }
       }
     },
-    createContext(entityPath, groupId, oData) {
+    setCreateContext(entityPath, groupId, oData) {
       var oContext =
         this.getModel().createEntry(entityPath,
           {
@@ -577,6 +567,9 @@ sap.ui.define([
       return oData;
     },
     initReport(sPath, aFilters, UIControls, Models, oSelection, activity) {
+      // Show skeleton screen immediately to avoid lag
+      this.showSkeletonScreen(true);
+      
       // Determine which authorization check to perform based on activity
       let authorizationPromise;
       let errorCode;
@@ -604,9 +597,6 @@ sap.ui.define([
           this.resetApp(UIControls, Models);
           return;
         }
-
-        // Show skeleton screen instead of busy indicator
-        this.showSkeletonScreen(true);
 
         if (oSelection) {
           this.CutOffDate = oSelection.CutOffDate;
@@ -638,7 +628,7 @@ sap.ui.define([
             }
 
             if (!this.Project) {
-              this.Project = oData.ProjectExternalID;
+              this.Project = oData.ProjectExternalID || oData.ProjectNumber;
             }
 
             var key = oData.ReportNumber;
@@ -654,7 +644,7 @@ sap.ui.define([
               UIControls.HeaderSmartForm.bindElement(RootEntity);
             } else {
 
-              var oContext = this.createContext("/ProjectCostRept", 'Group2', oData);
+              var oContext = this.setCreateContext("/ProjectCostRept", 'Group2', oData);
               //set default data to Form
               UIControls.HeaderSmartForm.setBindingContext(oContext);
             }
@@ -683,12 +673,20 @@ sap.ui.define([
             if (isLineItemReport) {
               Models.ViewControl.setProperty('/Tables/ShowCostSummary', false);
               Models.ViewControl.setProperty('/Tables/ShowCostItem', true);
-              UIControls.CostItemTable.bindElement(RootEntity);
+              // For Display mode (activity "03") and Change mode (activity "02"), 
+              // skip binding here - parameterized entity will be used by specialized controllers
+              if (activity === "01") {
+                UIControls.CostItemTable.bindElement(RootEntity);
+              }
 
             } else {
               Models.ViewControl.setProperty('/Tables/ShowCostSummary', true);
               Models.ViewControl.setProperty('/Tables/ShowCostItem', false);
-              UIControls.CostSummaryTable.bindElement(RootEntity);
+              // For Display mode (activity "03") and Change mode (activity "02"),
+              // skip binding here - parameterized entity will be used by specialized controllers
+              if (activity === "01") {
+                UIControls.CostSummaryTable.bindElement(RootEntity);
+              }
 
             }
             // UIControls.CostSummaryTable.bindRows(          {
@@ -934,6 +932,10 @@ sap.ui.define([
                 // Navigate to update page with the newly created report number after a delay
                 // This allows the success message to be visible for a while
                 setTimeout(() => {
+                  // Get CutOffDate from the header context instead of controller property
+                  var oHeaderContext = UIControls.HeaderSmartForm.getBindingContext();
+                  var dCutOffDate = oHeaderContext ? oHeaderContext.getObject().CutOffDate : new Date();
+                  
                   // Unbind and reset changes to ensure clean state for navigation
                   UIControls.HeaderSmartForm.unbindElement();
                   UIControls.HeaderItemTable.unbindElement();
@@ -945,7 +947,7 @@ sap.ui.define([
                   this.getModel().resetChanges();
 
                   var oRouter = this.getOwnerComponent().getRouter();
-                  var sCutOffDate = this.formatDateForURL(this.CutOffDate || new Date());
+                  var sCutOffDate = this.formatDateForURL(dCutOffDate || new Date());
                   oRouter.navTo("change", {
                     reportId: NextReportNumber,
                     cutOffDate: sCutOffDate
@@ -1281,7 +1283,7 @@ sap.ui.define([
         //   ForecastFinalMargin_F = '0';
 
         oModel.setProperty(cxt.getPath() + '/ForecastFinalMargin_F',
-          this.getNumber(ForecastFinalMargin_F).toFixed(2));
+          Math.max(-999, Math.min(this.getNumber(ForecastFinalMargin_F), 999)).toFixed(2));
 
         var CumulInternalValuation = oValuation.CumulInternalValuation;
         var PreviousMonthValue = oValuation.PrevInternalValuation;
@@ -1475,7 +1477,8 @@ sap.ui.define([
         'to_Item', 'to_Valuation_oc', 'to_HeaderItem_oc', 'ProjectInternalID',
         'ProjectQS', 'Delete_mc', 'Update_mc', 'ProjectExternalID', 'WBSElementInternalID',
         '__metadata', 'to_Header', 'ProjectCurrency', 'ClientName', 'CutOffDate',
-        'IsLineItemsRequested', 'WBSLevel2Descr', 'WBSLevel3Descr', 'WBSLevel4Descr'
+        'IsLineItemsRequested', 'WBSLevel2Descr', 'WBSLevel3Descr', 'WBSLevel4Descr',
+        'p_project', 'p_cutoffdate', 'p_pcrnum'
       ];
 
       problematicProperties.forEach(function (prop) {
@@ -1512,22 +1515,38 @@ sap.ui.define([
 
       return oData;
     },
+    
+    /**
+     * Convert value to EDM Decimal format for OData payloads
+     * Uses NumberFormat for consistent decimal conversion
+     * @param {any} value - The value to convert
+     * @returns {string} - EDM formatted decimal string (e.g., "1234.56")
+     */
     convertToSAPCurrFormat(value) {
-
-      var Currency = "AED";
-      //var Lang = sap.ui.getCore().getConfiguration().getLanguage();
-      var Formatter = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+      var num = this.getNumber(value);
+      var oDecimalFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
         decimals: 2,
-        currency: Currency,
         groupingEnabled: false,
-        emptyString: null,
         decimalSeparator: "."
-      }
-      );
-      var oLocale = new sap.ui.core.Locale("en-US");
-      //var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oLocale);
-      value = Formatter.format(this.getNumber(value));
-      return value;
+      });
+      return oDecimalFormat.format(num);
+    },
+    
+    /**
+     * Format value for display with currency (UI display only)
+     * @param {any} value - The value to format
+     * @param {string} sCurrency - Currency code (default: "AED")
+     * @returns {string} - Formatted display string
+     */
+    formatCurrencyForDisplay(value, sCurrency) {
+      var oCurrencyFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+        decimals: 2,
+        currencyCode: false,
+        groupingEnabled: true,
+        groupingSeparator: ',',
+        decimalSeparator: "."
+      });
+      return oCurrencyFormat.format(this.getNumber(value), sCurrency || "AED");
     },
 
     formatDecimal(val) {
@@ -1597,55 +1616,15 @@ sap.ui.define([
 
           var oTable = that.getCostTable(UIControls);
           if (oTable === UIControls.CostSummaryTable) {
-            if (!that._shouldSkipInitialCalculations()) {
-              that.getModel().read("/ActualCost(p_project='" +
-                that.Project + "',p_date='" +
-                that.formatDateToYYYYmmDD(that.CutOffDate) + "')/Set", {
-                success: function (oData) {
-                  if (oData) {
-                    that.setActualPOCost(
-                      that.getCostTable(UIControls),
-                      oData.results
-                    );
-                    that.showSkeletonScreen(false);
-                  }
-                  that.calculateTableTotals(oTable);
-                },
-                error: function () {
-                  that.showSkeletonScreen(false);
-                }
-              });
-            } else {
-              // Initial load gating: still compute hierarchy level 6/7 totals
-              that.calculateTableTotals(oTable);
-              that.showSkeletonScreen(false);
-            }
+            // Skip ActualCost OData call for performance - data already comes from main query
+            that.calculateTableTotals(oTable);
+            that.showSkeletonScreen(false);
           }
 
           if (oTable === UIControls.CostItemTable) {
-            if (!that._shouldSkipInitialCalculations()) {
-              that.getModel().read("/ActualCostItem(p_project='" +
-                that.Project + "',p_date='" +
-                that.formatDateToYYYYmmDD(that.CutOffDate) + "')/Set", {
-                success: function (oData) {
-                  if (oData) {
-                    that.setActualCostItem(
-                      that.getCostTable(UIControls),
-                      oData.results
-                    );
-                    that.showSkeletonScreen(false);
-                    that.calculateTableTotals(oTable);
-                  }
-                },
-                error: function () {
-                  that.showSkeletonScreen(false);
-                }
-              });
-            } else {
-              // Initial load gating: still compute hierarchy level 6/7 totals
-              that.calculateTableTotals(oTable);
-              that.showSkeletonScreen(false);
-            }
+            // Skip ActualCostItem OData call for performance - data already comes from main query
+            that.calculateTableTotals(oTable);
+            that.showSkeletonScreen(false);
           }
         }
       };
@@ -1666,103 +1645,10 @@ sap.ui.define([
     },
 
     showSkeletonScreen: function (show) {
-      var oView = this.getView();
-      if (!oView) {
-        console.warn("View not available for skeleton screen");
-        // Fallback to global busy indicator
-        if (show) {
-          sap.ui.core.BusyIndicator.show(0);
-        } else {
-          sap.ui.core.BusyIndicator.hide();
-        }
-        return;
-      }
-
-      // Try to find the current page - try multiple possible IDs
-      var oPage = oView.byId("page") || oView.byId("createPage") || oView.byId("changePage") || oView.byId("displayPage");
-
-      if (!oPage) {
-        // Try to find any page element
-        var aPages = oView.findAggregatedObjects(true, function (oControl) {
-          return oControl.getMetadata().getName() === "sap.m.Page";
-        });
-        if (aPages.length > 0) {
-          oPage = aPages[0];
-        }
-      }
-
-      // Find ObjectPageLayout if available
-      var oObjectPageLayout = oView.byId("ObjectPageLayout");
-      var oTargetControl = oObjectPageLayout || oPage;
-
-      if (!oTargetControl) {
-        console.warn("No target control found, using global busy indicator");
-        if (show) {
-          sap.ui.core.BusyIndicator.show(0);
-        } else {
-          sap.ui.core.BusyIndicator.hide();
-        }
-        return;
-      }
-
-      // Apply CSS classes to prevent SmartForm flicker
-      var oPageDomRef = oPage.getDomRef();
-      if (oPageDomRef) {
-        if (show) {
-          oPageDomRef.classList.add("smartFormLoading");
-          oPageDomRef.classList.remove("smartFormLoaded");
-        } else {
-          oPageDomRef.classList.remove("smartFormLoading");
-          oPageDomRef.classList.add("smartFormLoaded");
-        }
-      }
-
-      // Use the control's built-in busy indicator functionality
+      // Use simple global busy indicator for better performance
       if (show) {
-        oTargetControl.setBusy(true);
-        oTargetControl.setBusyIndicatorDelay(0);
-
-        // Additionally show skeleton content if we can
-        if (!this._skeletonShown && oPage) {
-          try {
-            if (!this._oSkeletonLoader) {
-              this._oSkeletonLoader = sap.ui.xmlfragment("com.atg.ppm.postfinrevenue.view.fragment.SkeletonLoader", this);
-              oView.addDependent(this._oSkeletonLoader);
-
-              // Create overlay container
-              this._oSkeletonOverlay = new sap.m.VBox({
-                width: "100%",
-                height: "100%",
-                backgroundDesign: "Solid",
-                items: [this._oSkeletonLoader]
-              }).addStyleClass("skeletonOverlay");
-
-              oView.addDependent(this._oSkeletonOverlay);
-            }
-
-            oPage.addContent(this._oSkeletonOverlay);
-            this._oSkeletonOverlay.setVisible(true);
-            this._skeletonShown = true;
-          } catch (e) {
-            console.warn("Could not show skeleton overlay:", e);
-          }
-        }
-
+        sap.ui.core.BusyIndicator.show(0);
       } else {
-        oTargetControl.setBusy(false);
-
-        // Hide skeleton overlay
-        if (this._skeletonShown && this._oSkeletonOverlay && oPage) {
-          try {
-            this._oSkeletonOverlay.setVisible(false);
-            oPage.removeContent(this._oSkeletonOverlay);
-            this._skeletonShown = false;
-          } catch (e) {
-            console.warn("Could not hide skeleton overlay:", e);
-          }
-        }
-
-        // Ensure global busy indicator is also hidden
         sap.ui.core.BusyIndicator.hide();
       }
     },
@@ -2030,30 +1916,74 @@ sap.ui.define([
 
     onCurrencyInputChange: function (oEvent) {
       var oInput = oEvent.getSource();
-      var oRow = oInput.getParent(); // Usually the row
-      var oTable = oRow.getParent(); // Usually the table
-
-      // Get the table ID
-      var sTableId = oTable.getId();
-      console.log("Table ID:", sTableId);
+      
+      // Try to get binding info - handle both regular Input and SmartField inner input
+      var oBindingInfo = oInput.getBindingInfo("value");
+      var oContext = oInput.getBindingContext();
+      
+      // For SmartField, the inner input may not have direct binding - traverse up to find it
+      if (!oBindingInfo || !oContext) {
+        var oParent = oInput.getParent();
+        while (oParent && (!oBindingInfo || !oContext)) {
+          if (!oBindingInfo && oParent.getBindingInfo) {
+            oBindingInfo = oParent.getBindingInfo("value");
+          }
+          if (!oContext && oParent.getBindingContext) {
+            oContext = oParent.getBindingContext();
+          }
+          oParent = oParent.getParent();
+        }
+      }
+      
+      // If still no binding info or context, log and return
+      if (!oBindingInfo || !oContext) {
+        console.warn("Could not find binding info or context for input change");
+        return;
+      }
 
       var sValue = oInput.getValue();
-      var fValue = parseFloat(sValue);
-      // Validate: must be a number and >= 0
-      if (isNaN(fValue)) {
-        oInput.setValueState("Error");
-        oInput.setValueStateText("Please enter a valid amount.");
+      
+      // Use SAP NumberFormat to parse locale-aware formatted values (handles both "88,888.00" and "88.888,00")
+      var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+        groupingEnabled: true,
+        decimals: 2
+      });
+      var fValue = oFloatFormat.parse(sValue);
+      
+      // If parsing fails, fValue will be NaN or null
+      if (fValue === null || fValue === undefined) {
+        fValue = NaN;
+      }
+      
+      var property = oBindingInfo.parts[0].path;
+      var oModel = oContext.getModel();
+      var sPath = oContext.getPath() + "/" + property;
+      
+      console.log("Currency input change - Property:", property, "Value:", sValue, "Parsed:", fValue);
+      
+      // Validate: must be a number
+      if (isNaN(fValue) || sValue === "" || sValue === null || sValue === undefined) {
+        // Get the old value from the model and restore it
+        var oldValue = oModel.getProperty(sPath);
+        
+        // If old value is also invalid, set to 0
+        if (isNaN(parseFloat(oldValue)) || oldValue === "" || oldValue === null || oldValue === undefined) {
+          oldValue = "0.00";
+        } else {
+          oldValue = this.convertToSAPCurrFormat(oldValue);
+        }
+        
+        // Restore the old value to the input field
+        oInput.setValue(oldValue);
+        oInput.setValueState("None");
+        
+        console.log("Restored old value:", oldValue, "for property:", property);
       } else {
         oInput.setValueState("None");
-        var oBindingInfo = oInput.getBindingInfo("value");
-        var oContext = oInput.getBindingContext();
+        var value = oModel.getProperty(sPath);
 
-        var property = oBindingInfo.parts[0].path;
-        var oModel = oContext.getModel();
-        var value = oModel.getProperty(oContext.getPath() + "/" + property);
-
-        oModel.setProperty(oContext.getPath() + '/' + property,
-          this.convertToSAPCurrFormat(value));
+        oModel.setProperty(sPath,
+          this.convertToSAPCurrFormat(fValue));
 
         if (property === 'ForecastFinalValue') {
           this.bInputForecastFinalValue = true;
@@ -2135,8 +2065,8 @@ sap.ui.define([
             var JoineryTenderValue = oContext.getObject().JoineryTenderValue;
             if (JoineryTenderValue && joineryValue) {
               var joineryMargin = ((JoineryTenderValue - joineryValue) / JoineryTenderValue) * 100;
-              joineryMargin = Math.round(joineryMargin * 100) / 100; // Round to two decimals
-              joineryMargin = this.convertToSAPCurrFormat(this.getNumber(joineryMargin));
+              // Apply bounds (-999 to 999) and round to two decimals
+              joineryMargin = Math.max(-999, Math.min(this.getNumber(joineryMargin), 999)).toFixed(2);
               oModel.setProperty(oContext.getPath() + '/TenderMarginJoinery_F',
                 joineryMargin);
             }
@@ -2146,8 +2076,8 @@ sap.ui.define([
             var TurnkeyTenderValue = oContext.getObject().TurnkeyTenderValue;
             if (TurnkeyTenderValue && turnkeyValue) {
               var turnkeyMargin = ((TurnkeyTenderValue - turnkeyValue) / TurnkeyTenderValue) * 100;
-              turnkeyMargin = Math.round(turnkeyMargin * 100) / 100; // Round to two decimals
-              turnkeyMargin = this.convertToSAPCurrFormat(this.getNumber(turnkeyMargin));
+              // Apply bounds (-999 to 999) and round to two decimals
+              turnkeyMargin = Math.max(-999, Math.min(this.getNumber(turnkeyMargin), 999)).toFixed(2);
               oModel.setProperty(oContext.getPath() + '/TenderMarginTurnkey_F',
                 turnkeyMargin);
             }
@@ -2210,23 +2140,140 @@ sap.ui.define([
     },
 
     onCostSummaryTableFullScreen: function () {
+      var bDialogCreated = false;
+      
       if (!this._oCostSummaryDialog) {
         this._oCostSummaryDialog = sap.ui.xmlfragment("com.atg.ppm.postfinrevenue.view.fragment.CostSummaryDialog", this);
         this.getView().addDependent(this._oCostSummaryDialog);
+        bDialogCreated = true;
       }
       
-      // Clone the table's binding context to the dialog
-      var oTable = this.UIControls.CostSummaryTable;
-      if (oTable && oTable.getBindingContext()) {
-        this._oCostSummaryDialog.setBindingContext(oTable.getBindingContext());
+      // Show busy indicator on dialog
+      this._oCostSummaryDialog.setBusy(true);
+      
+      // Get the main CostSummaryTable and its binding
+      var oMainTable = this.UIControls.CostSummaryTable;
+      
+      // Find the dialog table
+      var oDialogTable = this._getDialogTable();
+      
+      if (oMainTable && oDialogTable) {
+        // Get the row binding from the main table
+        var oRowBinding = oMainTable.getBinding("rows");
+        
+        if (oRowBinding) {
+          var sBindingPath = oRowBinding.getPath();
+          var oBindingContext = oRowBinding.getContext();
+          var oMainTableModel = oMainTable.getModel();
+          
+          // Check if main table is using a JSON model (Change scenario)
+          var bIsJSONModel = oMainTableModel && oMainTableModel.isA("sap.ui.model.json.JSONModel");
+          
+          if (bIsJSONModel) {
+            // JSON model binding - set the JSON model as the default model on the dialog table
+            // This allows all existing template bindings (e.g., {WBSLevel2Descr}) to work
+            oDialogTable.setModel(oMainTableModel);
+            oDialogTable.unbindRows();
+            oDialogTable.bindRows({
+              path: sBindingPath,
+              sorter: new sap.ui.model.Sorter('counter', false)
+            });
+            this._oCostSummaryDialog.setBusy(false);
+          } else if (sBindingPath && sBindingPath.startsWith("/")) {
+            // OData absolute path - only bind once when dialog is first created or path changes
+            var oDialogBinding = oDialogTable.getBinding("rows");
+            var sDialogPath = oDialogBinding ? oDialogBinding.getPath() : "";
+            
+            // Only rebind if the path has changed (avoid re-fetching and losing local changes)
+            if (bDialogCreated || sDialogPath !== sBindingPath) {
+              oDialogTable.bindRows({
+                path: sBindingPath,
+                parameters: {
+                  groupId: 'costChanges'
+                },
+                sorter: {
+                  path: 'counter',
+                  descending: false
+                },
+                events: {
+                  dataReceived: () => {
+                    this._oCostSummaryDialog.setBusy(false);
+                  }
+                }
+              });
+            } else {
+              // No rebinding needed, hide busy indicator immediately
+              this._oCostSummaryDialog.setBusy(false);
+            }
+          } else {
+            // Relative path (to_CostDetail) - set binding context
+            // The dialog table's binding is relative, so it will use the shared model data
+            if (oBindingContext) {
+              this._oCostSummaryDialog.setBindingContext(oBindingContext);
+            } else if (oMainTable.getBindingContext()) {
+              this._oCostSummaryDialog.setBindingContext(oMainTable.getBindingContext());
+            }
+            // Hide busy indicator after context is set
+            this._oCostSummaryDialog.setBusy(false);
+          }
+        } else if (oMainTable.getBindingContext()) {
+          // Fallback to context-based binding
+          this._oCostSummaryDialog.setBindingContext(oMainTable.getBindingContext());
+          this._oCostSummaryDialog.setBusy(false);
+        } else {
+          this._oCostSummaryDialog.setBusy(false);
+        }
+        
+        // Refresh the dialog table to show current model data (including local changes)
+        // without triggering a server request (skip for JSON model as it's already fresh)
+        var oDialogBinding = oDialogTable.getBinding("rows");
+        if (oDialogBinding && !oMainTable.getModel().isA("sap.ui.model.json.JSONModel")) {
+          oDialogBinding.refresh(false);
+        }
+      } else {
+        this._oCostSummaryDialog.setBusy(false);
       }
       
       this._oCostSummaryDialog.open();
+    },
+    
+    /**
+     * Helper method to get the table inside the Cost Summary Dialog
+     * @returns {sap.ui.table.Table} The dialog table or null
+     * @private
+     */
+    _getDialogTable: function () {
+      if (!this._oCostSummaryDialog) {
+        return null;
+      }
+      
+      var aContent = this._oCostSummaryDialog.getContent();
+      if (aContent && aContent.length > 0) {
+        var oVBox = aContent[0];
+        if (oVBox && oVBox.getItems) {
+          var aItems = oVBox.getItems();
+          if (aItems && aItems.length > 0) {
+            var oTable = aItems[0];
+            if (oTable && oTable.isA("sap.ui.table.Table")) {
+              return oTable;
+            }
+          }
+        }
+      }
+      return null;
     },
 
     onCloseCostSummaryDialog: function () {
       if (this._oCostSummaryDialog) {
         this._oCostSummaryDialog.close();
+        
+        // Sync changes back to the main table
+        var oMainTable = this.UIControls.CostSummaryTable;
+        if (oMainTable && oMainTable.getBinding("rows")) {
+          // Refresh main table to show any changes made in the dialog
+          // Using false to read from cached model data without server request
+          oMainTable.getBinding("rows").refresh(false);
+        }
       }
     },
 

@@ -24,7 +24,7 @@ sap.ui.define([
                     IsLineItemsRequested: "", // SAP format: "" for false, "X" for true
                     CutOffDate: new Date() // Set default cut off date
                 };
-                var oContext = this.createContext("/ProjCostHeaderData", 'Group1', oDefaultData);
+                var oContext = this.setCreateContext("/ProjCostHeaderData", 'Group1', oDefaultData);
                 oForm.setBindingContext(oContext);
             });
         },
