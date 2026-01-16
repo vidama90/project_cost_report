@@ -4,7 +4,7 @@
     xmlns="sap.m"
     xmlns:l="sap.ui.layout"
 >
-    <VBox>
+    <VBox> 
         <Toolbar>
             <ToolbarSpacer />
             <Button
