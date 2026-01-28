@@ -673,20 +673,14 @@ sap.ui.define([
             if (isLineItemReport) {
               Models.ViewControl.setProperty('/Tables/ShowCostSummary', false);
               Models.ViewControl.setProperty('/Tables/ShowCostItem', true);
-              // For Display mode (activity "03") and Change mode (activity "02"), 
-              // skip binding here - parameterized entity will be used by specialized controllers
-              if (activity === "01") {
-                UIControls.CostItemTable.bindElement(RootEntity);
-              }
+              // Skip binding here for all modes - parameterized entity will be used by specialized controllers
+              // Activity "01" (Create), "02" (Change), "03" (Display) all use parameterized entity for cost detail
 
             } else {
               Models.ViewControl.setProperty('/Tables/ShowCostSummary', true);
               Models.ViewControl.setProperty('/Tables/ShowCostItem', false);
-              // For Display mode (activity "03") and Change mode (activity "02"),
-              // skip binding here - parameterized entity will be used by specialized controllers
-              if (activity === "01") {
-                UIControls.CostSummaryTable.bindElement(RootEntity);
-              }
+              // Skip binding here for all modes - parameterized entity will be used by specialized controllers
+              // Activity "01" (Create), "02" (Change), "03" (Display) all use parameterized entity for cost detail
 
             }
             // UIControls.CostSummaryTable.bindRows(          {
@@ -1185,7 +1179,8 @@ sap.ui.define([
               prop !== 'Delete_mc' &&
               prop !== 'Update_mc' &&
               originalData[prop] !== null &&
-              originalData[prop] !== undefined) {
+              originalData[prop] !== undefined && 
+              prop !== 'ProjectType') {
               cleanData[prop] = originalData[prop];
             }
           }
@@ -2034,6 +2029,26 @@ sap.ui.define([
           return "#666666"; // Default Gray
       }
     },
+
+    formatStatusText: function (status) {
+      switch (status) {
+        case "1":
+          return "CREATE (1)";
+        case "2":
+          return "IN REVIEW (2)";
+        case "3":
+          return "APPROVED (3)";
+        case "4":
+          return "POSTED (4)";
+        case "5":
+          return "REJECTED (5)";
+        case "6":
+          return "DELETED (6)";
+        default:
+          return status || "";
+      }
+    },
+
     setHeaderSmartFormProperties() {
       var oModel = this.getModel();
       var oContext = this.UIControls.HeaderSmartForm.getBindingContext();

@@ -128,7 +128,7 @@ sap.ui.define([
             Models.ViewControl.setProperty("/SelectionScreen/IsVisible", false);
             this.ensureSmartFormContentLoaded();
             
-            // Check ReportStatus and disable status field if status is 2, 3, or 4
+            // Check ReportStatus and disable status field if status is 3, 4, or 5 (read-only statuses)
             this._applyReportStatusRestriction();
             
             // Now call our callback to bind cost detail with parameterized entity
@@ -139,8 +139,8 @@ sap.ui.define([
         },
         
         /**
-         * Check the current ReportStatus and disable the status field if it's 2, 3, or 4
-         * Status 2, 3, 4 are locked statuses that shouldn't allow status change
+         * Check the current ReportStatus and disable the status field if it's 3, 4, or 5
+         * Status 3, 4, 5 are read-only statuses that shouldn't allow status change
          * @private
          */
         _applyReportStatusRestriction: function() {
@@ -168,12 +168,12 @@ sap.ui.define([
             
             console.log("Current ReportStatus: " + sReportStatus);
             
-            // If status is 2, 3, or 4, disable the ReportStatus field
-            if (sReportStatus === "2" || sReportStatus === "3" || sReportStatus === "4") {
-                console.log("ReportStatus is " + sReportStatus + " - disabling status field");
+            // If status is 3, 4, or 5, disable the ReportStatus field (read-only statuses)
+            if (sReportStatus === "3" || sReportStatus === "4" || sReportStatus === "5") {
+                console.log("ReportStatus is " + sReportStatus + " - disabling status field (read-only)");
                 this.Models.ViewControl.setProperty("/SmartField/ReportStatus", false);
             } else {
-                // Status 1 or 5 - allow editing
+                // Status 1, 2, or 6 - allow editing
                 console.log("ReportStatus is " + sReportStatus + " - allowing status field edit");
                 this.Models.ViewControl.setProperty("/SmartField/ReportStatus", true);
             }

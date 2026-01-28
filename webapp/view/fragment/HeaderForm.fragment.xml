@@ -22,16 +22,23 @@
                 <Label text="Report Status" />
             </smartForm:label>
             <HBox alignItems="Center">
+                <!-- Select shown when status is editable (1, 2, 6) - only allows selection of 1, 2, 6 -->
                 <Select
                     id="ReportStatusSelect"
                     selectedKey="{ReportStatus}"
-                    enabled="{ViewControl>/SmartField/ReportStatus}"
+                    visible="{ViewControl>/SmartField/ReportStatus}"
                     forceSelection="false"
                 >
                     <core:Item key="1" text="CREATE (1)" />
                     <core:Item key="5" text="REJECTED (5)" />
                     <core:Item key="6" text="DELETED (6)" />
                 </Select>
+                <!-- Text shown when status is not editable (3, 4, 5) - displays current status -->
+                <Text 
+                    id="ReportStatusText"
+                    text="{path: 'ReportStatus', formatter: '.formatStatusText'}"
+                    visible="{= !${ViewControl>/SmartField/ReportStatus} }"
+                />
                 <core:Icon 
                     src="{path: 'ReportStatus', formatter: '.formatStatusIcon'}" 
                     color="{path: 'ReportStatus', formatter: '.formatStatusColor'}"

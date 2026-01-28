@@ -59,47 +59,20 @@ sap.ui.define([
                 return;
             }
             
-            // Pass additional parameters to oSelection object
-            oSelection.Project = oSelection.ProjectExternalID; // Pass Project
-            oSelection.ReportMonth = oSelection.ReportingMonth; // Pass Report Month
-            
             // Set CutOff Date - use existing value or default to current date
             if (!oSelection.CutOffDate) {
                 oSelection.CutOffDate = new Date(); // Default to current date
             }
             
-            // Set Line Items - use existing value or default to empty array
-            if (!oSelection.LineItems) {
-                oSelection.LineItems = []; // Default to empty array
-            }
+            // Navigate to create page - report existence check will be done there
+            // Convert SAP string format to boolean for URL parameter
+            var bLineItems = oSelection.IsLineItemsRequested === "X" || oSelection.IsLineItemsRequested === true;
             
-            // Check if report already exists
-            var oFilter1 = new Filter("ProjectExternalID", FilterOperator.EQ, oSelection.ProjectExternalID);
-            var oFilter2 = new Filter("ReportingMonth", FilterOperator.EQ, oSelection.ReportingMonth);
-            var aFilters = [oFilter1, oFilter2];
-            
-            this.getModel().read("/ProjectCostRept", {
-                filters: aFilters,
-                success: (oResult) => {
-                    var oData = oResult.results[0];
-                    if (!oData) {
-                        // Navigate to create page with all required parameters
-                        // Convert SAP string format to boolean for URL parameter
-                        var bLineItems = oSelection.IsLineItemsRequested === "X" || oSelection.IsLineItemsRequested === true;
-                        
-                        this.getOwnerComponent().getRouter().navTo("create", {
-                            projectId: oSelection.ProjectExternalID,
-                            reportMonth: this.formatDateForURL(oSelection.ReportingMonth),
-                            cutOffDate: this.formatDateForURL(oSelection.CutOffDate),
-                            lineItems: bLineItems.toString()
-                        });
-                    } else {
-                        this.showError("reportExist");
-                    }
-                },
-                error: () => {
-                    this.showError("error");
-                }
+            this.getOwnerComponent().getRouter().navTo("create", {
+                projectId: oSelection.ProjectExternalID,
+                reportMonth: this.formatDateForURL(oSelection.ReportingMonth),
+                cutOffDate: this.formatDateForURL(oSelection.CutOffDate),
+                lineItems: bLineItems.toString()
             });
         },
         

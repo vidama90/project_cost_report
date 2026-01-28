@@ -13,6 +13,8 @@ sap.ui.define([
     
     return BaseController.extend("com.atg.ppm.postfinrevenue.controller.ReportCreate", {
         onInit: function() {
+            console.log("=== ReportCreate onInit CALLED ===", new Date().toISOString());
+            
             // Initialize UI controls
             this.UIControls = this.getUIControlls();
             
@@ -59,6 +61,8 @@ sap.ui.define([
         },
         
         _onCreateMatched: function(oEvent) {
+            console.log("=== _onCreateMatched CALLED ===", new Date().toISOString());
+            
             // Check if user is trying to access create page after creating a report
             var oRouter = this.getOwnerComponent().getRouter();
             var oHistory = sap.ui.core.routing.History.getInstance();
@@ -74,38 +78,8 @@ sap.ui.define([
                 });
                 this.getOwnerComponent().setModel(oGlobalModel, "globalState");
             }
+                        
             
-            var bReportJustCreated = oGlobalModel.getProperty("/reportJustCreated");
-            
-            // If a report was just created and user is trying to navigate back to create page
-            if (bReportJustCreated) {
-                var sLastCreatedReportId = oGlobalModel.getProperty("/lastCreatedReportId");
-                MessageBox.warning(
-                    "A report has already been created. You cannot create another report for the same project/period. Redirecting to the existing report.", 
-                    {
-                        title: "Report Already Created",
-                        actions: [MessageBox.Action.OK],
-                        onClose: function() {
-                            // Reset the flag and redirect to the created report
-                            oGlobalModel.setProperty("/reportJustCreated", false);
-                            if (sLastCreatedReportId) {
-                                // Get CutOffDate from header context if available, otherwise use current date
-                                var oHeaderContext = this.UIControls.HeaderSmartForm ? this.UIControls.HeaderSmartForm.getBindingContext() : null;
-                                var dCutOffDate = oHeaderContext ? oHeaderContext.getObject().CutOffDate : new Date();
-                                var sCutOffDate = this.formatDateForURL(dCutOffDate || new Date());
-                                oRouter.navTo("change", {
-                                    reportId: sLastCreatedReportId,
-                                    cutOffDate: sCutOffDate
-                                });
-                            } else {
-                                // Fallback to home if no report ID
-                                oRouter.navTo("home");
-                            }
-                        }.bind(this)
-                    }
-                );
-                return; // Exit early to prevent normal create page initialization
-            }
             
             var oArgs = oEvent.getParameter("arguments");
             var sProjectId = oArgs.projectId;
@@ -137,6 +111,73 @@ sap.ui.define([
                 sIsLineItemsRequested = bLineItems ? "X" : "";
             }
             
+            // Check if a report already exists for this project/period before initializing
+            this._checkReportExistsAndInitialize(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested, oRouter);
+        },
+        
+        /**
+         * Check if a report already exists for the given project and reporting month
+         * If exists, show error and redirect; otherwise initialize the create page
+         * @param {string} sProjectId Project External ID
+         * @param {Date} dReportMonth Reporting Month
+         * @param {Date} dCutOffDate Cut Off Date
+         * @param {string} sIsLineItemsRequested Line Items requested flag (SAP format)
+         * @param {sap.ui.core.routing.Router} oRouter Router instance
+         * @private
+         */
+        _checkReportExistsAndInitialize: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested, oRouter) {
+            var that = this;
+            
+            // Build filters to check if report exists
+            var aFilters = [
+                new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId),
+                new Filter("ReportingMonth", FilterOperator.EQ, dReportMonth)
+            ];
+            
+            BusyIndicator.show(0);
+            
+            this.getModel().read("/ProjectCostRept", {
+                filters: aFilters,
+                success: function(oResult) {
+                    var oExistingReport = oResult.results[0];
+                    
+                    if (oExistingReport) {
+                        // Report already exists - show error and redirect to home
+                        BusyIndicator.hide();
+                        MessageBox.error(
+                            "A cost report has already been created for this month. Please use the 'Change' option to make any modifications.",
+                            {
+                                title: that.getResourceBundle().getText("error") || "Error",
+                                actions: [MessageBox.Action.OK],
+                                onClose: function() {
+                                    // Redirect to home screen
+                                    oRouter.navTo("home");
+                                }
+                            }
+                        );
+                    } else {
+                        // No existing report - proceed with create page initialization
+                        that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                    }
+                },
+                error: function(oError) {
+                    BusyIndicator.hide();
+                    console.error("Error checking for existing report:", oError);
+                    // Proceed with create anyway if check fails
+                    that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                }
+            });
+        },
+        
+        /**
+         * Proceed with create page initialization after confirming no report exists
+         * @param {string} sProjectId Project External ID
+         * @param {Date} dReportMonth Reporting Month
+         * @param {Date} dCutOffDate Cut Off Date
+         * @param {string} sIsLineItemsRequested Line Items requested flag (SAP format)
+         * @private
+         */
+        _proceedWithCreateInitialization: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested) {
             // Set up filters for data loading
             var oFilter = new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId);
             var aFilters = [oFilter];
