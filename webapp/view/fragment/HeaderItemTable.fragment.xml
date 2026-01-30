@@ -45,6 +45,7 @@
                     >
                         <Label
                             text="{/#ProjCostHeaderItemDataType/WBSElement/@sap:label}"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -53,6 +54,7 @@
                     >
                         <Label
                             text="{/#ProjCostHeaderItemDataType/ProjectType/@sap:label}"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -62,6 +64,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/CumulCertifToDate/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -71,6 +74,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/CumulInternalValue/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -80,6 +84,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/WorkInProgress/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -89,6 +94,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/ForecastFinalValue/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -98,6 +104,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/ForecastFinalCost/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -107,6 +114,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/ForecastFinalMargin/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -116,6 +124,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/ForecastFinalMargin_F/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -125,6 +134,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/CumulValueToDate/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -134,6 +144,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/PreviousMonthValue/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -143,6 +154,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/CurrentMonthValue/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -152,6 +164,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/CumulMarginToDate/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -161,6 +174,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/PreviousMargin/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -170,6 +184,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/CurrentMonthMargin/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -179,6 +194,7 @@
                         <Label
                             text="{/#ProjCostHeaderItemDataType/FinishingFund/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                 </columns>
@@ -193,28 +209,28 @@
                             <Text text="{ProjectType}" />
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['CumulCertifToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['CumulCertifToDate', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['CumulInternalValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['CumulInternalValue', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['WorkInProgress', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['WorkInProgress', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['ForecastFinalValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['ForecastFinalValue', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                     visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
@@ -232,14 +248,14 @@
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['ForecastFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['ForecastFinalCost', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['ForecastFinalMargin', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['ForecastFinalMargin', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
@@ -258,49 +274,49 @@
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['CumulValueToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['CumulValueToDate', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['PreviousMonthValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['PreviousMonthValue', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['CurrentMonthValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['CurrentMonthValue', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['CumulMarginToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['CumulMarginToDate', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['PreviousMargin', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['PreviousMargin', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['CurrentMonthMargin', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['CurrentMonthMargin', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                     class="amount-field"
                                     textAlign="End"
                                 />
                             </HBox>
                             <HBox justifyContent="End">
                                 <Text
-                                    text="{ parts: ['FinishingFund', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                    text="{ parts: ['FinishingFund', 'TransactionCurrency'],  formatOptions: {showMeasure: false}}"
                                     class="amount-field"
                                     textAlign="End"
                                     visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"

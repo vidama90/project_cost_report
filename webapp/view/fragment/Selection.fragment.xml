@@ -39,17 +39,7 @@
                 <smartField:SmartField
                     id="CutOffDate"
                     value="{CutOffDate}"
-                />
-            </smartForm:GroupElement>
-            <smartForm:GroupElement
-                label="Line Items"
-            >
-                <Switch
-                    state="{path: 'IsLineItemsRequested', formatter: '.formatBooleanFromString'}"
-                    change="onLineItemsRequestedChange"
-                    customTextOn="Yes"
-                    customTextOff="No"
-                    tooltip="Toggle to include line items in the report"
+                    change=".onCutOffDateChange"
                 />
             </smartForm:GroupElement>
             <!-- <smartForm:GroupElement>

@@ -60,6 +60,29 @@ sap.ui.define([
             this._oCostDetailModel = new JSONModel({ items: [] });
         },
         
+        /**
+         * Cleanup when the view is destroyed to prevent duplicate ID errors
+         */
+        onExit: function() {
+            // Destroy TablePersoControllers to prevent duplicate ID errors on re-navigation
+            if (this._oHITablePersoController) {
+                this._oHITablePersoController.destroy();
+                this._oHITablePersoController = null;
+            }
+            if (this._oValuationTablePersoController) {
+                this._oValuationTablePersoController.destroy();
+                this._oValuationTablePersoController = null;
+            }
+            if (this._oCostDetailTablePersoController) {
+                this._oCostDetailTablePersoController.destroy();
+                this._oCostDetailTablePersoController = null;
+            }
+            if (this._oCostItemTablePersoController) {
+                this._oCostItemTablePersoController.destroy();
+                this._oCostItemTablePersoController = null;
+            }
+        },
+        
         _onCreateMatched: function(oEvent) {
             console.log("=== _onCreateMatched CALLED ===", new Date().toISOString());
             
@@ -95,13 +118,33 @@ sap.ui.define([
             // Convert dates back to Date objects if needed
             var dReportMonth = null;
             if (sReportMonth) {
-                dReportMonth = new Date(sReportMonth);
+                // Parse YYYY-MM-DD format and create UTC date to avoid timezone shifts
+                var monthParts = sReportMonth.split('-');
+                if (monthParts.length === 3) {
+                    // Create date at UTC noon to avoid timezone shifts when OData converts
+                    dReportMonth = new Date(Date.UTC(parseInt(monthParts[0]), parseInt(monthParts[1]) - 1, parseInt(monthParts[2]), 12, 0, 0));
+                } else {
+                    dReportMonth = new Date(sReportMonth);
+                }
             }
             
+            // Parse cutoff date from URL format (YYYY-MM-DD), default to today if invalid
             var dCutOffDate = null;
             if (sCutOffDate) {
-                dCutOffDate = new Date(sCutOffDate);
+                // Parse YYYY-MM-DD format explicitly to avoid timezone issues
+                var parts = sCutOffDate.split('-');
+                if (parts.length === 3) {
+                    dCutOffDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                }
+                // Check if date is invalid
+                if (!dCutOffDate || isNaN(dCutOffDate.getTime())) {
+                    dCutOffDate = new Date();
+                }
+            } else {
+                dCutOffDate = new Date();
             }
+            
+            console.log("CutOffDate from URL:", sCutOffDate, "-> Parsed:", dCutOffDate);
             
             // Parse line items boolean parameter and convert to SAP format
             var bLineItems = false;
@@ -131,7 +174,8 @@ sap.ui.define([
             // Build filters to check if report exists
             var aFilters = [
                 new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId),
-                new Filter("ReportingMonth", FilterOperator.EQ, dReportMonth)
+                new Filter("ReportingMonth", FilterOperator.EQ, dReportMonth),
+                new Filter("ReportStatus", FilterOperator.NE, 6)
             ];
             
             BusyIndicator.show(0);
@@ -178,6 +222,9 @@ sap.ui.define([
          * @private
          */
         _proceedWithCreateInitialization: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested) {
+            // Store CutOffDate as controller property for use in other methods
+            this.CutOffDate = dCutOffDate;
+            
             // Set up filters for data loading
             var oFilter = new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId);
             var aFilters = [oFilter];
@@ -353,9 +400,8 @@ sap.ui.define([
             }
             
             try {
-                // Get CutOffDate from header context instead of controller property
-                var oHeaderContext = this.UIControls.HeaderSmartForm.getBindingContext();
-                var dCutOffDate = oHeaderContext ? oHeaderContext.getObject().CutOffDate : new Date();
+                // Use CutOffDate stored in controller property (from URL parameter)
+                var dCutOffDate = this.CutOffDate || new Date();
                 
                 // Construct parameterized entity path
                 // Entity: P_RptCostDetailData requires parameters p_project and p_cutoffdate

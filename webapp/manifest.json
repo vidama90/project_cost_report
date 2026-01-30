@@ -132,7 +132,7 @@
         },
         {
           "name": "display",
-          "pattern": "display/{reportId}",
+          "pattern": "display/{reportId}/{cutOffDate}",
           "target": [
             "TargetReportDisplay"
           ]

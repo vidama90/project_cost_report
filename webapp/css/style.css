@@ -41,6 +41,16 @@
     color: #666 !important;
 }
 
+/* Right-align currency SmartFields in display mode */
+.sapUiCompSmartForm .sapMHBox .sapUiCompSmartField {
+    text-align: right !important;
+}
+
+.sapUiCompSmartForm .sapMHBox .sapUiCompSmartField > span {
+    display: block !important;
+    text-align: right !important;
+}
+
 .currencySuffix {
     font-size: 1em;
     color: #666;

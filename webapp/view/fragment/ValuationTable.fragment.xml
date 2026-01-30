@@ -43,6 +43,7 @@
                     >
                         <Label
                             text="{/#ProjCostValuationDataType/WBSElement/@sap:label}"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -52,6 +53,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/CumulCertifToDate/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -61,6 +63,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/PreviouslyCertified/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -70,6 +73,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/Movement/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -79,6 +83,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/CumulInternalValuation/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -88,6 +93,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/PrevInternalValuation/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -97,6 +103,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/CurrentMonthValue/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -106,6 +113,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/WorkInProgress/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -115,6 +123,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/InterDivCertifDeduction/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -124,6 +133,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/Overclaims/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -133,6 +143,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/Underclaims/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                     <Column
@@ -142,6 +153,7 @@
                         <Label
                             text="{/#ProjCostValuationDataType/SundryIncome/@sap:label}"
                             textAlign="Right"
+                            wrapping="true"
                         />
                     </Column>
                 </columns>
@@ -155,7 +167,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['CumulCertifToDate', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['CumulCertifToDate', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                             />
@@ -163,7 +175,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['PreviouslyCertified', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['PreviouslyCertified', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                             />
@@ -171,7 +183,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['Movement', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['Movement', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                             />
@@ -179,7 +191,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['CumulInternalValuation', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['CumulInternalValuation', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                                 visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
@@ -197,7 +209,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['PrevInternalValuation', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['PrevInternalValuation', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                             />
@@ -205,7 +217,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['CurrentMonthValue', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['CurrentMonthValue', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                             />
@@ -213,7 +225,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['WorkInProgress', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['WorkInProgress', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                             />
@@ -221,7 +233,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['InterDivCertifDeduction', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['InterDivCertifDeduction', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                                 visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
@@ -239,7 +251,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['Overclaims', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['Overclaims', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                                 visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
@@ -257,7 +269,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['Underclaims', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['Underclaims', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                                 visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"
@@ -275,7 +287,7 @@
                         <HBox justifyContent="End">
                             <Text
                                 width="auto"
-                                text="{ parts: ['SundryIncome', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}"
+                                text="{ parts: ['SundryIncome', 'TransactionCurrency'], formatter: '.formatCurrencyWithCode'}"
                                 class="amount-field"
                                 textAlign="End"
                                 visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${ViewControl>/Mode/IsCreate} === false}"

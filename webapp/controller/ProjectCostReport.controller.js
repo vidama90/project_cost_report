@@ -59,9 +59,10 @@ sap.ui.define([
                 return;
             }
             
-            // Set CutOff Date - use existing value or default to current date
-            if (!oSelection.CutOffDate) {
-                oSelection.CutOffDate = new Date(); // Default to current date
+            // Use the selected CutOff Date, only default to today if truly empty
+            var dCutOffDate = oSelection.CutOffDate;
+            if (!dCutOffDate) {
+                dCutOffDate = new Date();
             }
             
             // Navigate to create page - report existence check will be done there
@@ -71,7 +72,7 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().navTo("create", {
                 projectId: oSelection.ProjectExternalID,
                 reportMonth: this.formatDateForURL(oSelection.ReportingMonth),
-                cutOffDate: this.formatDateForURL(oSelection.CutOffDate),
+                cutOffDate: this.formatDateForURL(dCutOffDate),
                 lineItems: bLineItems.toString()
             });
         },
@@ -84,29 +85,35 @@ sap.ui.define([
                 return;
             }
             
+            // Use the selected CutOff Date, only default to today if truly empty
+            var dCutOffDate = oSelection.CutOffDate;
+            if (!dCutOffDate) {
+                dCutOffDate = new Date();
+            }
+            
             var oFilter1 = new Filter("ProjectExternalID", FilterOperator.EQ, oSelection.ProjectExternalID);
             var oFilter2 = new Filter("ReportingMonth", FilterOperator.EQ, oSelection.ReportingMonth);
-            var aFilters = [oFilter1, oFilter2];
+            var oFilter3 = new Filter("ReportStatus", FilterOperator.NE, 6);
+
+            var aFilters = [oFilter1, oFilter2, oFilter3];
             
+            var that = this;
             this.getModel().read("/ProjectCostRept", {
                 filters: aFilters,
                 success: (oResult) => {
                     var oData = oResult.results[0];
                     if (oData) {
-                        // Get the cut off date from the selection
-                        var sCutOffDate = this.formatDateForURL(oSelection.CutOffDate || new Date());
-                        
                         // Navigate to change page with cutOffDate
-                        this.getOwnerComponent().getRouter().navTo("change", {
+                        that.getOwnerComponent().getRouter().navTo("change", {
                             reportId: oData.ReportNumber,
-                            cutOffDate: sCutOffDate
+                            cutOffDate: that.formatDateForURL(dCutOffDate)
                         });
                     } else {
-                        this.showError("noReportExist");
+                        that.showError("noReportExist");
                     }
                 },
                 error: () => {
-                    this.showError("error");
+                    that.showError("error");
                 }
             });
         },
@@ -119,25 +126,34 @@ sap.ui.define([
                 return;
             }
             
+            // Use the selected CutOff Date, only default to today if truly empty
+            var dCutOffDate = oSelection.CutOffDate;
+            if (!dCutOffDate) {
+                dCutOffDate = new Date();
+            }
+            
             var oFilter1 = new Filter("ProjectExternalID", FilterOperator.EQ, oSelection.ProjectExternalID);
             var oFilter2 = new Filter("ReportingMonth", FilterOperator.EQ, oSelection.ReportingMonth);
-            var aFilters = [oFilter1, oFilter2];
+            var oFilter3 = new Filter("ReportStatus", FilterOperator.NE, 6);
+            var aFilters = [oFilter1, oFilter2, oFilter3];
             
+            var that = this;
             this.getModel().read("/ProjectCostRept", {
                 filters: aFilters,
                 success: (oResult) => {
                     var oData = oResult.results[0];
                     if (oData) {
-                        // Navigate to display page
-                        this.getOwnerComponent().getRouter().navTo("display", {
-                            reportId: oData.ReportNumber
+                        // Navigate to display page with cutOffDate
+                        that.getOwnerComponent().getRouter().navTo("display", {
+                            reportId: oData.ReportNumber,
+                            cutOffDate: that.formatDateForURL(dCutOffDate)
                         });
                     } else {
-                        this.showError("noReportExist");
+                        that.showError("noReportExist");
                     }
                 },
                 error: () => {
-                    this.showError("error");
+                    that.showError("error");
                 }
             });
         },
@@ -164,6 +180,27 @@ sap.ui.define([
             var oContext = this.getView().byId("SmartForm").getBindingContext();
             var oModel = oContext.getModel();
             oModel.setProperty(oContext.getPath() + "/IsLineItemsRequested", sValue);
+        },
+
+        /**
+         * Handle CutOffDate change - set to today's date if cleared
+         * @param {sap.ui.base.Event} oEvent Change event
+         */
+        onCutOffDateChange: function(oEvent) {
+            var oContext = this.getView().byId("SmartForm").getBindingContext();
+            
+            if (!oContext) {
+                return;
+            }
+            
+            var oData = oContext.getObject();
+            var dCutOffDate = oData.CutOffDate;
+            
+            // Only set to today if the date was cleared (null/undefined/empty)
+            if (!dCutOffDate) {
+                var dToday = new Date();
+                oContext.getModel().setProperty(oContext.getPath() + "/CutOffDate", dToday);
+            }
         },
 
         /**

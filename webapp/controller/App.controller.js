@@ -297,7 +297,6 @@ sap.ui.define([
 
         });
 
-        grandTotal = this.convertToSAPCurrFormat(grandTotal);
         if (colName === 'ForecastFinalMargin_F') {
           var totalMargin = 0;
           var totalValue = 0;
@@ -322,12 +321,14 @@ sap.ui.define([
             })
           );
         } else {
+          // Format with thousands separator for display, currency at end
+          var formattedTotal = this.formatCurrencyWithCode(grandTotal);
           col.setFooter(
             new sap.m.HBox({
               justifyContent: "End",
               items: [
                 new sap.m.Text({
-                  text: grandTotal + " " + (currency || "AED"),
+                  text: formattedTotal ,
                   textAlign: "End"
                 })
               ]
@@ -416,7 +417,7 @@ sap.ui.define([
           var oModel = oContext.getModel();
 
           //add subtotals to table
-          if (oData.HierarchyLevel === 6) {
+          if (oData.HierarchyLevel === -1) {
             oModel.setProperty(oContext.getPath() + '/' + colName,
               this.convertToSAPCurrFormat(subTotal));
             grandTotal = grandTotal + subTotal;
@@ -424,7 +425,7 @@ sap.ui.define([
             return false;
           }
           //add grand total to table
-          if (oData.HierarchyLevel === 7) {
+          if (oData.HierarchyLevel === -2) {
             oModel.setProperty(oContext.getPath() + '/' + colName,
               this.convertToSAPCurrFormat(grandTotal));
             grandTotal = 0;
@@ -615,11 +616,13 @@ sap.ui.define([
 
             if (!oData) {
               this.showError("nodata");
+              this.showSkeletonScreen(false);
               
               setTimeout(() => {
                 var oRouter = this.getOwnerComponent().getRouter();
                 oRouter.navTo("home");
               }, 4000);
+              return; // Stop execution if no data found
             }
 
             // Use the passed oSelection parameter if available
@@ -714,6 +717,9 @@ sap.ui.define([
       this.getModel().resetChanges();
       Models.ViewControl.setProperty("/Sections/IsVisible", true);
       Models.ViewControl.setProperty("/SelectionScreen/IsVisible", false);
+
+      // Load status value help for formatStatusText
+      this.loadStatusValueHelp();
 
       // Ensure SmartForm content is properly loaded before showing
       this.ensureSmartFormContentLoaded();
@@ -1157,7 +1163,7 @@ sap.ui.define([
         if (oContext) {
           var originalData = oContext.getObject();
 
-          if (originalData.HierarchyLevel === 6 || originalData.HierarchyLevel === 7) {
+          if (originalData.HierarchyLevel === -1 || originalData.HierarchyLevel === -2) {
             return false;
           }
 
@@ -1221,7 +1227,7 @@ sap.ui.define([
           aCostContexts.forEach((oCostContext) => {
               if (!oCostContext) return;
               var oCost = oCostContext.getObject();
-              if (oCost.HierarchyLevel === 6) {
+              if (oCost.HierarchyLevel === -1) {
                   costLookup[oCost.WBSLevel2] = this.getNumber(oCost.ProjectedFinalCost);
               }
           });
@@ -1278,7 +1284,7 @@ sap.ui.define([
         //   ForecastFinalMargin_F = '0';
 
         oModel.setProperty(cxt.getPath() + '/ForecastFinalMargin_F',
-          Math.max(-999, Math.min(this.getNumber(ForecastFinalMargin_F), 999)).toFixed(2));
+          Math.max(-999.99, Math.min(this.getNumber(ForecastFinalMargin_F), 999.99)).toFixed(2));
 
         var CumulInternalValuation = oValuation.CumulInternalValuation;
         var PreviousMonthValue = oValuation.PrevInternalValuation;
@@ -1544,10 +1550,27 @@ sap.ui.define([
       return oCurrencyFormat.format(this.getNumber(value), sCurrency || "AED");
     },
 
+    /**
+     * Format currency value with currency code appended (for table cell display)
+     * @param {any} value - The numeric value to format
+     * @param {string} sCurrency - Currency code
+     * @returns {string} - Formatted string with currency code (e.g., "1,234.56 AED")
+     */
+    formatCurrencyWithCode(value, sCurrency) {
+      var oNumberFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+        decimals: 2,
+        groupingEnabled: true,
+        groupingSeparator: ',',
+        decimalSeparator: "."
+      });
+      var sFormattedValue = oNumberFormat.format(this.getNumber(value));
+      return sFormattedValue + " " + (sCurrency || "AED");
+    },
+
     formatDecimal(val) {
       var oNumberFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
-        maxFractionDigits: 2,
-        groupingEnabled: false,
+        decimals: 2,
+        groupingEnabled: true,
         emptyString: null,
         decimalSeparator: "."
       });
@@ -1660,7 +1683,7 @@ sap.ui.define([
         }
         var oData = oContext.getObject();
         var oModel = oContext.getModel();
-        if (oData.HierarchyLevel === 6) {
+        if (oData.HierarchyLevel === -1) {
           return false;
         }
         var ActualCostPO = 0;
@@ -1699,7 +1722,7 @@ sap.ui.define([
         }
         var oData = oContext.getObject();
         var oModel = oContext.getModel();
-        if (oData.HierarchyLevel === 6) {
+        if (oData.HierarchyLevel === -1) {
           return false;
         }
         var ActualCostPO = 0;
@@ -2031,22 +2054,42 @@ sap.ui.define([
     },
 
     formatStatusText: function (status) {
-      switch (status) {
-        case "1":
-          return "CREATE (1)";
-        case "2":
-          return "IN REVIEW (2)";
-        case "3":
-          return "APPROVED (3)";
-        case "4":
-          return "POSTED (4)";
-        case "5":
-          return "REJECTED (5)";
-        case "6":
-          return "DELETED (6)";
-        default:
-          return status || "";
+      // Try to get description from cached status value help
+      if (this._mStatusDescriptions && this._mStatusDescriptions[status]) {
+        return this._mStatusDescriptions[status];
       }
+      // Fallback to status code if description not loaded yet
+      return status || "";
+    },
+    
+    /**
+     * Load status descriptions from Z_I_PPM_VALURPTSTATUSVH value help
+     * and cache them for use by formatStatusText
+     */
+    loadStatusValueHelp: function() {
+      var that = this;
+      if (this._mStatusDescriptions) {
+        return; // Already loaded
+      }
+      this._mStatusDescriptions = {};
+      
+      this.getModel().read("/Z_I_PPM_VALURPTSTATUSVH", {
+        success: function(oData) {
+          oData.results.forEach(function(oStatus) {
+            that._mStatusDescriptions[oStatus.Status] = oStatus.Descr;
+          });
+          // Refresh bindings that use formatStatusText
+          if (that.UIControls && that.UIControls.HeaderSmartForm) {
+            var oContext = that.UIControls.HeaderSmartForm.getBindingContext();
+            if (oContext) {
+              oContext.getModel().refresh(true);
+            }
+          }
+        },
+        error: function(oError) {
+          console.error("Failed to load status value help:", oError);
+        }
+      });
     },
 
     setHeaderSmartFormProperties() {
@@ -2064,14 +2107,14 @@ sap.ui.define([
         if (oBinding) {
           var aContexts = oBinding.getContexts(0, oBinding.getLength());
 
-          // Find the first HierarchyLevel 6 row for Joinery and Turnkey
+          // Find the first HierarchyLevel -1 row for Joinery and Turnkey
           var joineryRow = aContexts.find(function (ctx) {
             var obj = ctx && ctx.getObject ? ctx.getObject() : null;
-            return obj && obj.HierarchyLevel === 6 && obj.ProjectType === "AJ";
+            return obj && obj.HierarchyLevel === -1 && obj.ProjectType === "AJ";
           });
           var turnkeyRow = aContexts.find(function (ctx) {
             var obj = ctx && ctx.getObject ? ctx.getObject() : null;
-            return obj && obj.HierarchyLevel === 6 && obj.ProjectType === "AT";
+            return obj && obj.HierarchyLevel === -1 && obj.ProjectType === "AT";
           });
 
           // Set JoineryTenderValue and TurnkeyTenderValue from the found rows
@@ -2080,8 +2123,8 @@ sap.ui.define([
             var JoineryTenderValue = oContext.getObject().JoineryTenderValue;
             if (JoineryTenderValue && joineryValue) {
               var joineryMargin = ((JoineryTenderValue - joineryValue) / JoineryTenderValue) * 100;
-              // Apply bounds (-999 to 999) and round to two decimals
-              joineryMargin = Math.max(-999, Math.min(this.getNumber(joineryMargin), 999)).toFixed(2);
+              // Apply bounds (-999.99 to 999.99) and round to two decimals
+              joineryMargin = Math.max(-999.99, Math.min(this.getNumber(joineryMargin), 999.99)).toFixed(2);
               oModel.setProperty(oContext.getPath() + '/TenderMarginJoinery_F',
                 joineryMargin);
             }
@@ -2091,8 +2134,8 @@ sap.ui.define([
             var TurnkeyTenderValue = oContext.getObject().TurnkeyTenderValue;
             if (TurnkeyTenderValue && turnkeyValue) {
               var turnkeyMargin = ((TurnkeyTenderValue - turnkeyValue) / TurnkeyTenderValue) * 100;
-              // Apply bounds (-999 to 999) and round to two decimals
-              turnkeyMargin = Math.max(-999, Math.min(this.getNumber(turnkeyMargin), 999)).toFixed(2);
+              // Apply bounds (-999.99 to 999.99) and round to two decimals
+              turnkeyMargin = Math.max(-999.99, Math.min(this.getNumber(turnkeyMargin), 999.99)).toFixed(2);
               oModel.setProperty(oContext.getPath() + '/TenderMarginTurnkey_F',
                 turnkeyMargin);
             }

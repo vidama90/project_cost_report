@@ -60,13 +60,16 @@
                 <Property Name="PotentialFinalAccountCost" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Potential Final Cost"/>
                 <Property Name="ActualCostPO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Actual Cost(PO)"/>
                 <Property Name="ActualCostSO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Actual Cost(SO)"/>
+                <Property Name="ActualCostPO_1" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="ActualCostSO_1" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="CommitedCostPO_1" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="CommitedCostPO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Commited Cost(PO)"/>
                 <Property Name="TotalPOCost" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Total PO Cost"/>
                 <Property Name="CostToComplete" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Cost To Complete"/>
                 <Property Name="ProjectedFinalCost" Type="Edm.Decimal" Precision="24" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Projected Final Cost"/>
                 <Property Name="Variance" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Variance"/>
                 <Property Name="Remarks" Type="Edm.String" MaxLength="1" sap:label="Remarks"/>
-                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:semantics="currency-code"/>
+                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Custom Project Curr" sap:quickinfo="Custom Project Currency" sap:semantics="currency-code"/>
                 <NavigationProperty Name="to_Header" Relationship="cds_z_ui_ppm_projectcostrpt.assoc_A95050B9F4494A4ABA6C149DEA05A349" FromRole="ToRole_assoc_A95050B9F4494A4ABA6C149DEA05A349" ToRole="FromRole_assoc_A95050B9F4494A4ABA6C149DEA05A349"/>
             </EntityType>
             <EntityType Name="ProjCostHeaderDataType" sap:label="CDS View for Project Cost Header Details" sap:content-version="1">
@@ -133,7 +136,7 @@
                 <Property Name="PreviousMargin" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Previous Margin"/>
                 <Property Name="CurrentMonthMargin" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Current Month Margin"/>
                 <Property Name="FinishingFund" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Finishing Fund"/>
-                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:semantics="currency-code"/>
+                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Document Currency" sap:quickinfo="SD Document Currency" sap:semantics="currency-code"/>
                 <NavigationProperty Name="to_Header" Relationship="cds_z_ui_ppm_projectcostrpt.assoc_46074A6600C040920461C1F06136923B" FromRole="ToRole_assoc_46074A6600C040920461C1F06136923B" ToRole="FromRole_assoc_46074A6600C040920461C1F06136923B"/>
             </EntityType>
             <EntityType Name="ProjectCostItemDataType" sap:label="Consumption view for Project Cost tem Data" sap:content-version="1">
@@ -194,7 +197,7 @@
                 <Property Name="Overclaims" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Overclaims"/>
                 <Property Name="Underclaims" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Underclaims"/>
                 <Property Name="SundryIncome" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true" sap:label="Sundry Income"/>
-                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:semantics="currency-code"/>
+                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Document Currency" sap:quickinfo="SD Document Currency" sap:semantics="currency-code"/>
                 <NavigationProperty Name="to_Header" Relationship="cds_z_ui_ppm_projectcostrpt.assoc_5382754AB1420D23CDA862821AA3D8E1" FromRole="ToRole_assoc_5382754AB1420D23CDA862821AA3D8E1" ToRole="FromRole_assoc_5382754AB1420D23CDA862821AA3D8E1"/>
             </EntityType>
             <EntityType Name="ProjectCostDetailType" sap:label="Consumption view for Project Cost Detail" sap:content-version="1">
@@ -410,15 +413,15 @@
                 <Property Name="TenderCost" Type="Edm.Decimal" Precision="31" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="RevisedBudget" Type="Edm.Decimal" Precision="31" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="PotentialFinalAccountCost" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
-                <Property Name="ActualCostPO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
-                <Property Name="ActualCostSO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
-                <Property Name="CommitedCostPO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="ActualCostPO" Type="Edm.Decimal" Precision="24" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="ActualCostSO" Type="Edm.Decimal" Precision="24" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="CommitedCostPO" Type="Edm.Decimal" Precision="24" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="TotalPOCost" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="CostToComplete" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
-                <Property Name="ProjectedFinalCost" Type="Edm.Decimal" Precision="24" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="ProjectedFinalCost" Type="Edm.Decimal" Precision="25" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="Variance" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="Remarks" Type="Edm.String" MaxLength="1"/>
-                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:semantics="currency-code"/>
+                <Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Document Currency" sap:quickinfo="SD Document Currency" sap:semantics="currency-code"/>
                 <NavigationProperty Name="Parameters" Relationship="cds_z_ui_ppm_projectcostrpt.assoc_13DC08CB391214E475BA67747C17AF99" FromRole="ToRole_assoc_13DC08CB391214E475BA67747C17AF99" ToRole="FromRole_assoc_13DC08CB391214E475BA67747C17AF99" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="P_RptCostDetailDataParameters" sap:semantics="parameters" sap:content-version="1">
@@ -433,6 +436,8 @@
             <EntityType Name="P_RptProjectCostDetailType" sap:label="Consumption view for Project Cost Detail" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="p_pcrnum"/>
+                    <PropertyRef Name="p_project"/>
+                    <PropertyRef Name="p_cutoffdate"/>
                     <PropertyRef Name="ReportNumber"/>
                     <PropertyRef Name="WBSLevel2"/>
                     <PropertyRef Name="WBSLevel3"/>
@@ -442,6 +447,8 @@
                     <PropertyRef Name="HierarchyLevel"/>
                 </Key>
                 <Property Name="p_pcrnum" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Report Number"/>
+                <Property Name="p_project" Type="Edm.String" Nullable="false" MaxLength="24" sap:display-format="UpperCase" sap:label="Project Definition"/>
+                <Property Name="p_cutoffdate" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="UpperCase" sap:label="CutOff Date"/>
                 <Property Name="ReportNumber" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Report Number"/>
                 <Property Name="WBSLevel2" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="NonNegative" sap:label="WBS Internal ID" sap:quickinfo="WBS Element"/>
                 <Property Name="WBSLevel3" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="NonNegative" sap:label="WBS Internal ID" sap:quickinfo="WBS Element"/>
@@ -456,8 +463,8 @@
                 <Property Name="TenderCost" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="RevisedBudget" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="PotentialFinalAccountCost" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
-                <Property Name="ActualCostPO" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
-                <Property Name="ActualCostSO" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="ActualCostPO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
+                <Property Name="ActualCostSO" Type="Edm.Decimal" Precision="23" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="CommitedCostPO" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="TotalPOCost" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
                 <Property Name="CostToComplete" Type="Edm.Decimal" Precision="21" Scale="3" sap:unit="TransactionCurrency" sap:variable-scale="true"/>
@@ -477,8 +484,12 @@
             <EntityType Name="P_RptProjectCostDetailParameters" sap:semantics="parameters" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="p_pcrnum"/>
+                    <PropertyRef Name="p_project"/>
+                    <PropertyRef Name="p_cutoffdate"/>
                 </Key>
                 <Property Name="p_pcrnum" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:parameter="mandatory" sap:label="Report Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="p_project" Type="Edm.String" Nullable="false" MaxLength="24" sap:display-format="UpperCase" sap:parameter="mandatory" sap:label="Project Definition" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="p_cutoffdate" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="UpperCase" sap:parameter="mandatory" sap:label="CutOff Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <NavigationProperty Name="Set" Relationship="cds_z_ui_ppm_projectcostrpt.assoc_94891E1ADBDF90D35A6485E0ED077D9B" FromRole="FromRole_assoc_94891E1ADBDF90D35A6485E0ED077D9B" ToRole="ToRole_assoc_94891E1ADBDF90D35A6485E0ED077D9B"/>
             </EntityType>
             <EntityType Name="ActualCostType" sap:label="Parameter CDS View for getting actual cost" sap:content-version="1">
@@ -1303,6 +1314,8 @@
                         <PropertyValue Property="NonFilterableProperties">
                             <Collection>
                                 <PropertyPath>p_pcrnum</PropertyPath>
+                                <PropertyPath>p_project</PropertyPath>
+                                <PropertyPath>p_cutoffdate</PropertyPath>
                             </Collection>
                         </PropertyValue>
                     </Record>
@@ -1328,6 +1341,8 @@
                         <PropertyValue Property="NonSortableProperties">
                             <Collection>
                                 <PropertyPath>p_pcrnum</PropertyPath>
+                                <PropertyPath>p_project</PropertyPath>
+                                <PropertyPath>p_cutoffdate</PropertyPath>
                             </Collection>
                         </PropertyValue>
                     </Record>

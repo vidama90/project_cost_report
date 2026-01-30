@@ -50,21 +50,21 @@
                                     text="{WBSLevel2Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn"
-                                    visible="{= ${HierarchyLevel} !== 5 &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== 5 &amp;&amp; ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text
                                     text="Sub Total:-"
                                     wrapping="false"
                                     textAlign="Right"
                                     class="hierarchyLevel6"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text
                                     text="Total:-"
                                     wrapping="false"
                                     textAlign="Right"
                                     class="hierarchyLevel7"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -82,19 +82,19 @@
                                     text="{WBSLevel3Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text
                                     text="{WBSLevel3Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn hierarchyLevel6"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text
                                     text="{WBSLevel3Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn hierarchyLevel7"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -112,19 +112,19 @@
                                     text="{WBSLevel4Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text
                                     text="{WBSLevel4Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn hierarchyLevel6"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text
                                     text="{WBSLevel4Descr}"
                                     wrapping="false"
                                     class="emphasizedColumn hierarchyLevel7"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -143,21 +143,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['TenderCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['TenderCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -176,21 +176,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['RevisedBudget', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['RevisedBudget', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -209,25 +209,25 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                                 <Input
                                     value="{ parts: ['PotentialFinalAccountCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
-                                    visible="{= ${ViewControl>/Mode/IsEditable} === true &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === true &amp;&amp; ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                     width="auto"
                                     class="amount-field"
                                     textAlign="End"
@@ -250,21 +250,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['ActualCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['ActualCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -283,21 +283,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['ActualCostSO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['ActualCostSO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -316,21 +316,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['CommitedCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['CommitedCostPO', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -349,21 +349,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['TotalPOCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['TotalPOCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -382,25 +382,25 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === false &amp;&amp; ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                                 <Input
                                     value="{ parts: ['CostToComplete', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
-                                    visible="{= ${ViewControl>/Mode/IsEditable} === true &amp;&amp; ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${ViewControl>/Mode/IsEditable} === true &amp;&amp; ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                     width="auto"
                                     class="amount-field"
                                     textAlign="End"
@@ -423,21 +423,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['ProjectedFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['ProjectedFinalCost', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -456,21 +456,21 @@
                                     wrapping="false"
                                     class="amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}"
+                                    visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}"
                                 />
                                 <Text 
                                     text="{ parts: ['Variance', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel6 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 6}"
+                                    visible="{= ${HierarchyLevel} === -1}"
                                 />
                                 <Text 
                                     text="{ parts: ['Variance', 'TransactionCurrency'], type: 'sap.ui.model.type.Currency'}" 
                                     wrapping="false"
                                     class="hierarchyLevel7 amount-field"
                                     textAlign="End"
-                                    visible="{= ${HierarchyLevel} === 7}"
+                                    visible="{= ${HierarchyLevel} === -2}"
                                 />
                             </HBox>
                         </table:template>
@@ -483,7 +483,7 @@
                             />
                         </table:label>
                         <table:template>
-                            <HBox visible="{= ${HierarchyLevel} !== 6 &amp;&amp; ${HierarchyLevel} !== 7}">
+                            <HBox visible="{= ${HierarchyLevel} !== -1 &amp;&amp; ${HierarchyLevel} !== -2}">
                                 <Text 
                                     text="{Remarks}"
                                     wrapping="false"

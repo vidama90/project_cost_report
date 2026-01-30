@@ -62,6 +62,29 @@ sap.ui.define([
         },
         
         /**
+         * Cleanup when the view is destroyed to prevent duplicate ID errors
+         */
+        onExit: function() {
+            // Destroy TablePersoControllers to prevent duplicate ID errors on re-navigation
+            if (this._oHITablePersoController) {
+                this._oHITablePersoController.destroy();
+                this._oHITablePersoController = null;
+            }
+            if (this._oValuationTablePersoController) {
+                this._oValuationTablePersoController.destroy();
+                this._oValuationTablePersoController = null;
+            }
+            if (this._oCostDetailTablePersoController) {
+                this._oCostDetailTablePersoController.destroy();
+                this._oCostDetailTablePersoController = null;
+            }
+            if (this._oCostItemTablePersoController) {
+                this._oCostItemTablePersoController.destroy();
+                this._oCostItemTablePersoController = null;
+            }
+        },
+        
+        /**
          * Handles route pattern matching when displaying a report
          * @param {sap.ui.base.Event} oEvent Pattern matched event
          */
@@ -74,12 +97,24 @@ sap.ui.define([
             this.sReportId = sReportId;
             this.sCutOffDate = sCutOffDate;
             
-            // Parse the cutoff date
+            // Parse the cutoff date from URL format (YYYY-MM-DD), default to today if invalid
             var dCutOffDate = null;
             if (sCutOffDate) {
-                dCutOffDate = new Date(sCutOffDate);
+                // Parse YYYY-MM-DD format explicitly to avoid timezone issues
+                var parts = sCutOffDate.split('-');
+                if (parts.length === 3) {
+                    dCutOffDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                }
+                // Check if date is invalid
+                if (!dCutOffDate || isNaN(dCutOffDate.getTime())) {
+                    dCutOffDate = new Date();
+                }
+            } else {
+                dCutOffDate = new Date();
             }
             this.CutOffDate = dCutOffDate;
+            
+            console.log("CutOffDate from URL:", sCutOffDate, "-> Parsed:", dCutOffDate);
             
             // Set up filters for data loading
             var oFilter = new sap.ui.model.Filter("ReportNumber", sap.ui.model.FilterOperator.EQ, sReportId);
@@ -141,6 +176,16 @@ sap.ui.define([
                 return;
             }
             
+            // Format cutoff date as YYYYMMDD string for the parameter
+            var sCutOffDateParam = "";
+            if (this.CutOffDate) {
+                var d = this.CutOffDate;
+                var year = d.getFullYear();
+                var month = String(d.getMonth() + 1).padStart(2, '0');
+                var day = String(d.getDate()).padStart(2, '0');
+                sCutOffDateParam = year + month + day;
+            }
+            
             var oCostSummaryTable = this.UIControls.CostSummaryTable;
             var oCostItemTable = this.UIControls.CostItemTable;
             
@@ -148,13 +193,15 @@ sap.ui.define([
             var bShowCostSummary = this.Models.ViewControl.getProperty('/Tables/ShowCostSummary');
             var bShowCostItem = this.Models.ViewControl.getProperty('/Tables/ShowCostItem');
             
-            console.log("Binding cost detail for Display - Report: " + sReportNumber + ", Project: " + sProjectId);
+            console.log("Binding cost detail for Display - Report: " + sReportNumber + ", Project: " + sProjectId + ", CutOffDate: " + sCutOffDateParam);
             console.log("ShowCostSummary: " + bShowCostSummary + ", ShowCostItem: " + bShowCostItem);
             
             // Construct parameterized entity path for FAST read
-            // P_RptProjectCostDetail only needs p_pcrnum (report number) parameter - same as update scenario
+            // P_RptProjectCostDetail requires p_pcrnum, p_project, and p_cutoffdate parameters
             var sParameterizedPath = "/P_RptProjectCostDetail(p_pcrnum='" + 
-                encodeURIComponent(sReportNumber) + "')/Set";
+                encodeURIComponent(sReportNumber) + "',p_project='" +
+                encodeURIComponent(sProjectId) + "',p_cutoffdate='" +
+                encodeURIComponent(sCutOffDateParam) + "')/Set";
             
             console.log("Reading from parameterized path: " + sParameterizedPath);
             

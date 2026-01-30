@@ -22,16 +22,25 @@
                 <Label text="Report Status" />
             </smartForm:label>
             <HBox alignItems="Center">
-                <!-- Select shown when status is editable (1, 2, 6) - only allows selection of 1, 2, 6 -->
+                <!-- Select shown when status is editable (1, 2, 3, 5, 6) - items loaded from Z_I_PPM_VALURPTSTATUSVH -->
                 <Select
                     id="ReportStatusSelect"
                     selectedKey="{ReportStatus}"
                     visible="{ViewControl>/SmartField/ReportStatus}"
                     forceSelection="false"
+                    items="{
+                        path: '/Z_I_PPM_VALURPTSTATUSVH',
+                        filters: [
+                            { path: 'Status', operator: 'EQ', value1: '1' },
+                            { path: 'Status', operator: 'EQ', value1: '2' },
+                            { path: 'Status', operator: 'EQ', value1: '3' },
+                            { path: 'Status', operator: 'EQ', value1: '5' },
+                            { path: 'Status', operator: 'EQ', value1: '6' }
+                        ],
+                        and: false
+                    }"
                 >
-                    <core:Item key="1" text="CREATE (1)" />
-                    <core:Item key="5" text="REJECTED (5)" />
-                    <core:Item key="6" text="DELETED (6)" />
+                    <core:ListItem key="{Status}" text="{Descr}" />
                 </Select>
                 <!-- Text shown when status is not editable (3, 4, 5) - displays current status -->
                 <Text 
@@ -138,13 +147,13 @@ pattern: 'yyyy MMMM'
         </smartForm:GroupElement>
         <smartForm:GroupElement>
             <smartForm:label>
-                <Label text="Tender Margin On Revenue" />
+                <Label text="Joinery Tender Value" />
             </smartForm:label>
             <HBox>
                 <smartField:SmartField
-                    editable="{ViewControl>/SmartField/TenderMarginOnRevenue}"
-                    id="TenderMarginOnRevenue"
-                    value="{TenderMarginOnRevenue}"
+                    editable="{ViewControl>/SmartField/JoineryTenderValue}"
+                    id="JoineryTenderValue"
+                    value="{JoineryTenderValue}"
                     width="15rem"
                     change="onCurrencyInputChange"
                 />
@@ -155,13 +164,13 @@ pattern: 'yyyy MMMM'
         </smartForm:GroupElement>
         <smartForm:GroupElement>
             <smartForm:label>
-                <Label text="Joinery Tender Value" />
+                <Label text="Tender Margin On Revenue" />
             </smartForm:label>
             <HBox>
                 <smartField:SmartField
-                    editable="{ViewControl>/SmartField/JoineryTenderValue}"
-                    id="JoineryTenderValue"
-                    value="{JoineryTenderValue}"
+                    editable="{ViewControl>/SmartField/TenderMarginOnRevenue}"
+                    id="TenderMarginOnRevenue"
+                    value="{TenderMarginOnRevenue}"
                     width="15rem"
                     change="onCurrencyInputChange"
                 />
@@ -260,7 +269,7 @@ pattern: 'yyyy MMMM'
         </smartForm:GroupElement>
         <smartForm:GroupElement>
             <smartForm:label>
-                <Label text="Main Contract Current Sell" />
+                <Label text="Main Contract Current Selling" />
             </smartForm:label>
             <HBox>
                 <smartField:SmartField
@@ -277,7 +286,7 @@ pattern: 'yyyy MMMM'
         </smartForm:GroupElement>
         <smartForm:GroupElement>
             <smartForm:label>
-                <Label text="Approved Variation Current Sell" />
+                <Label text="Approved Variation Current Selling" />
             </smartForm:label>
             <HBox>
                 <smartField:SmartField
@@ -296,7 +305,7 @@ pattern: 'yyyy MMMM'
         </smartForm:GroupElement>
         <smartForm:GroupElement>
             <smartForm:label>
-                <Label text="Unapproved Variation Current Sell" />
+                <Label text="Unapproved Variation Current Selling" />
             </smartForm:label>
             <HBox>
                 <smartField:SmartField
@@ -333,7 +342,7 @@ pattern: 'yyyy MMMM'
         </smartForm:GroupElement>
         <smartForm:GroupElement>
             <smartForm:label>
-                <Label text="Potential Final Account Current Sell" />
+                <Label text="Potential Final Account Current Selling" />
             </smartForm:label>
             <HBox>
                 <smartField:SmartField

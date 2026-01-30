@@ -26,6 +26,12 @@
     </edmx:Reference>
     <edmx:DataServices>
         <Schema Namespace="z_ui_ppm_projectcostrpt_o2_van.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjectCostSummaryDataType/ActualCostSO_1">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjectCostSummaryDataType/CommitedCostPO_1">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ProjectCostSummaryDataType">
                 <Annotation Term="UI.PresentationVariant">
                     <Record>
@@ -104,6 +110,12 @@
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptProjectCostDetailType/p_pcrnum">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptProjectCostDetailType/p_project">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="cds_z_ui_ppm_projectcostrpt.P_RptProjectCostDetailType/p_cutoffdate">
                 <Annotation Term="UI.Hidden"/>
             </Annotations>
             <Annotations Target="cds_z_ui_ppm_projectcostrpt.ActualCostType/p_project">
