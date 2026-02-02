@@ -115,8 +115,8 @@ sap.ui.define([
         try {
           var oRouter = oController.getOwnerComponent().getRouter();
           if (oRouter) {
-            // Navigate to the home route (selection screen)
-            oRouter.navTo("home");
+            // Navigate to the home route with replace:true to avoid looping
+            oRouter.navTo("home", {}, true);
             return;
           }
         } catch (e) {
@@ -157,8 +157,8 @@ sap.ui.define([
             try {
               var oRouter = oController.getOwnerComponent().getRouter();
               if (oRouter) {
-                // Navigate to the home route (selection screen)
-                oRouter.navTo("home");
+                // Navigate to the home route with replace:true to avoid looping
+                oRouter.navTo("home", {}, true);
               }
             } catch (e) {
               console.error("Could not navigate to front page:", e);

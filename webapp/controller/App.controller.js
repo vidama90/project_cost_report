@@ -620,7 +620,8 @@ sap.ui.define([
               
               setTimeout(() => {
                 var oRouter = this.getOwnerComponent().getRouter();
-                oRouter.navTo("home");
+                // Use replace:true to clear history and avoid looping
+                oRouter.navTo("home", {}, true);
               }, 4000);
               return; // Stop execution if no data found
             }
@@ -948,10 +949,12 @@ sap.ui.define([
 
                   var oRouter = this.getOwnerComponent().getRouter();
                   var sCutOffDate = this.formatDateForURL(dCutOffDate || new Date());
+                  // Use replace:true to remove Create screen from history
+                  // This prevents back button from going to Create screen after report is created
                   oRouter.navTo("change", {
                     reportId: NextReportNumber,
                     cutOffDate: sCutOffDate
-                  });
+                  }, true);
                 }, 2000); // 2 second delay to show success message
 
               },
@@ -1405,6 +1408,10 @@ sap.ui.define([
       if (!oBinding) return;
 
       var aContexts = oBinding.getContexts(0, oBinding.getLength());
+      
+      // Check if we're in Create mode
+      var oViewControl = this.getView().getModel('ViewControl');
+      var bIsCreate = oViewControl && oViewControl.getProperty('/Mode/IsCreate');
 
       aContexts.forEach((oContext, ind) => {
         if (!oContext) {
@@ -1414,16 +1421,28 @@ sap.ui.define([
         //var cxt = e.getParameter('listItem').getBindingContext();
         var oModel = oContext.getModel();
 
-        oModel.setProperty(oContext.getPath() + '/PotentialFinalAccountCost',
-          this.convertToSAPCurrFormat(oCost.PotentialFinalAccountCost));
         oModel.setProperty(oContext.getPath() + '/CostToComplete',
           this.convertToSAPCurrFormat(oCost.CostToComplete));
         var Variance = this.getNumber(oCost.RevisedBudget) - this.getNumber(oCost.ProjectedFinalCost);
         var ProjectedFinalCost = this.getNumber(oCost.ActualCostPO) + this.getNumber(oCost.ActualCostSO) + this.getNumber(oCost.CommitedCostPO) + this.getNumber(oCost.CostToComplete);
 
-
         oModel.setProperty(oContext.getPath() + '/ProjectedFinalCost',
           this.convertToSAPCurrFormat(ProjectedFinalCost));
+        
+        // In Create mode: If PotentialFinalAccountCost was NOT manually entered, copy from ProjectedFinalCost
+        // If manually entered, keep the manual value
+        var bIsManualEntry = oCost._isPotentialFinalAccountCostManual === true;
+        
+        if (bIsCreate && !bIsManualEntry) {
+          // Copy ProjectedFinalCost to PotentialFinalAccountCost in Create mode when not manually entered
+          oModel.setProperty(oContext.getPath() + '/PotentialFinalAccountCost',
+            this.convertToSAPCurrFormat(ProjectedFinalCost));
+        } else {
+          // Keep existing PotentialFinalAccountCost value (format it properly)
+          oModel.setProperty(oContext.getPath() + '/PotentialFinalAccountCost',
+            this.convertToSAPCurrFormat(oCost.PotentialFinalAccountCost));
+        }
+        
         oModel.setProperty(oContext.getPath() + '/Variance',
           this.convertToSAPCurrFormat(Variance));
 
@@ -1435,6 +1454,10 @@ sap.ui.define([
       if (!oBinding) return;
 
       var aContexts = oBinding.getContexts(0, oBinding.getLength());
+      
+      // Check if we're in Create mode
+      var oViewControl = this.getView().getModel('ViewControl');
+      var bIsCreate = oViewControl && oViewControl.getProperty('/Mode/IsCreate');
 
       aContexts.forEach((oContext, ind) => {
         if (!oContext) {
@@ -1453,6 +1476,18 @@ sap.ui.define([
 
         oModel.setProperty(oContext.getPath() + '/ProjectedFinalCost',
           this.convertToSAPCurrFormat(ProjectedFinalCost));
+        
+        // In Create mode: If PotentialFinalAccountCost was NOT manually entered, copy from ProjectedFinalCost
+        // If manually entered, keep the manual value
+        var bIsManualEntry = oCost._isPotentialFinalAccountCostManual === true;
+        
+        if (bIsCreate && !bIsManualEntry) {
+          // Copy ProjectedFinalCost to PotentialFinalAccountCost in Create mode when not manually entered
+          oModel.setProperty(oContext.getPath() + '/PotentialFinalAccountCost',
+            this.convertToSAPCurrFormat(ProjectedFinalCost));
+        }
+        // Note: If manually entered, PotentialFinalAccountCost keeps its current value (no need to re-set)
+        
         // oModel.setProperty(cxt.getPath() + '/CostToComplete',
         //   this.convertToSAPCurrFormat(oCost.CostToComplete));
         // oModel.setProperty(cxt.getPath() + '/UnderCost',
@@ -1479,7 +1514,7 @@ sap.ui.define([
         'ProjectQS', 'Delete_mc', 'Update_mc', 'ProjectExternalID', 'WBSElementInternalID',
         '__metadata', 'to_Header', 'ProjectCurrency', 'ClientName', 'CutOffDate',
         'IsLineItemsRequested', 'WBSLevel2Descr', 'WBSLevel3Descr', 'WBSLevel4Descr',
-        'p_project', 'p_cutoffdate', 'p_pcrnum'
+        'p_project', 'p_cutoffdate', 'p_pcrnum', '_isPotentialFinalAccountCostManual'
       ];
 
       problematicProperties.forEach(function (prop) {
@@ -2007,6 +2042,13 @@ sap.ui.define([
           this.bInputForecastFinalValue = true;
         }
 
+        // Track manual entry for PotentialFinalAccountCost in Create scenario
+        if (property === 'PotentialFinalAccountCost') {
+          // Set a flag on the row data to indicate manual entry
+          oModel.setProperty(oContext.getPath() + '/_isPotentialFinalAccountCostManual', true);
+          console.log("PotentialFinalAccountCost manually entered for row:", oContext.getPath());
+        }
+
         //this.refreshTable(oTable, property);
 
         //MessageToast.show("Values Updated");
@@ -2058,8 +2100,16 @@ sap.ui.define([
       if (this._mStatusDescriptions && this._mStatusDescriptions[status]) {
         return this._mStatusDescriptions[status];
       }
-      // Fallback to status code if description not loaded yet
-      return status || "";
+      // Fallback to hardcoded status descriptions if value help not loaded yet
+      var mFallbackStatus = {
+        "1": "Created",
+        "2": "In Review",
+        "3": "Reviewed",
+        "4": "Approved",
+        "5": "Rejected",
+        "6": "Deleted"
+      };
+      return mFallbackStatus[status] || status || "";
     },
     
     /**

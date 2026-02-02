@@ -475,7 +475,8 @@ sap.ui.define([
                 emphasizedAction: MessageBox.Action.OK,
                 onClose: (sAction) => {
                     if (sAction === MessageBox.Action.OK) {
-                        this.getOwnerComponent().getRouter().navTo("home");
+                        // Use replace:true to clear navigation history and avoid looping
+                        this.getOwnerComponent().getRouter().navTo("home", {}, true);
                     }
                 }
             });

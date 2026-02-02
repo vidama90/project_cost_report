@@ -160,7 +160,7 @@ sap.ui.define([
         
         /**
          * Check if a report already exists for the given project and reporting month
-         * If exists, show error and redirect; otherwise initialize the create page
+         * If exists, show error and redirect; otherwise check previous month's approval status
          * @param {string} sProjectId Project External ID
          * @param {Date} dReportMonth Reporting Month
          * @param {Date} dCutOffDate Cut Off Date
@@ -171,7 +171,7 @@ sap.ui.define([
         _checkReportExistsAndInitialize: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested, oRouter) {
             var that = this;
             
-            // Build filters to check if report exists
+            // Build filters to check if report exists for current month
             var aFilters = [
                 new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId),
                 new Filter("ReportingMonth", FilterOperator.EQ, dReportMonth),
@@ -194,14 +194,14 @@ sap.ui.define([
                                 title: that.getResourceBundle().getText("error") || "Error",
                                 actions: [MessageBox.Action.OK],
                                 onClose: function() {
-                                    // Redirect to home screen
-                                    oRouter.navTo("home");
+                                    // Redirect to home screen with replace:true to clear history and avoid looping
+                                    oRouter.navTo("home", {}, true);
                                 }
                             }
                         );
                     } else {
-                        // No existing report - proceed with create page initialization
-                        that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                        // No existing report - check if previous month's report is approved
+                        that._checkPreviousMonthApprovalStatus(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
                     }
                 },
                 error: function(oError) {
@@ -211,6 +211,129 @@ sap.ui.define([
                     that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
                 }
             });
+        },
+        
+        /**
+         * Check if the previous month's report is in approved status (=4)
+         * If not approved, show a warning but allow user to proceed
+         * @param {string} sProjectId Project External ID
+         * @param {Date} dReportMonth Current Reporting Month
+         * @param {Date} dCutOffDate Cut Off Date
+         * @param {string} sIsLineItemsRequested Line Items requested flag (SAP format)
+         * @private
+         */
+        _checkPreviousMonthApprovalStatus: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested) {
+            var that = this;
+            
+            // Calculate previous month's date
+            var dPreviousMonth = new Date(dReportMonth.getTime());
+            dPreviousMonth.setMonth(dPreviousMonth.getMonth() - 1);
+            
+            // Build filters to check previous month's report
+            var aFilters = [
+                new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId),
+                new Filter("ReportingMonth", FilterOperator.EQ, dPreviousMonth),
+                new Filter("ReportStatus", FilterOperator.NE, 6) // Not deleted
+            ];
+            
+            this.getModel().read("/ProjectCostRept", {
+                filters: aFilters,
+                success: function(oResult) {
+                    BusyIndicator.hide();
+                    var oPreviousReport = oResult.results[0];
+                    
+                    if (oPreviousReport) {
+                        // Previous month's report exists - check if approved (status = 4)
+                        if (oPreviousReport.ReportStatus !== "4") {
+                            // Previous month's report is NOT approved - show warning
+                            var sStatusText = that._getStatusText(oPreviousReport.ReportStatus);
+                            var sPreviousMonthFormatted = that._formatMonthYear(dPreviousMonth);
+                            
+                            MessageBox.warning(
+                                "The report for " + sPreviousMonthFormatted + " is currently in '" + sStatusText + "' status and has not been approved yet. " +
+                                "It is recommended to approve the previous month's report before creating a new one.\n\n" +
+                                "Do you want to continue creating a new report anyway?",
+                                {
+                                    title: "Previous Month Report Not Approved",
+                                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                                    emphasizedAction: MessageBox.Action.NO,
+                                    onClose: function(sAction) {
+                                        if (sAction === MessageBox.Action.YES) {
+                                            // User chose to proceed
+                                            that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                                        } else {
+                                            // User chose not to proceed - redirect to home
+                                            that.getOwnerComponent().getRouter().navTo("home", {}, true);
+                                        }
+                                    }
+                                }
+                            );
+                        } else {
+                            // Previous month's report is approved - proceed normally
+                            that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                        }
+                    } else {
+                        // No previous month's report exists - show warning
+                        var sPreviousMonthFormatted = that._formatMonthYear(dPreviousMonth);
+                        
+                        MessageBox.warning(
+                            "No cost report exists for " + sPreviousMonthFormatted + ". " +
+                            "It is recommended to create and approve the previous month's report before creating a new one.\n\n" +
+                            "Do you want to continue creating a new report anyway?",
+                            {
+                                title: "Previous Month Report Missing",
+                                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                                emphasizedAction: MessageBox.Action.NO,
+                                onClose: function(sAction) {
+                                    if (sAction === MessageBox.Action.YES) {
+                                        // User chose to proceed
+                                        that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                                    } else {
+                                        // User chose not to proceed - redirect to home
+                                        that.getOwnerComponent().getRouter().navTo("home", {}, true);
+                                    }
+                                }
+                            }
+                        );
+                    }
+                },
+                error: function(oError) {
+                    BusyIndicator.hide();
+                    console.error("Error checking previous month's report:", oError);
+                    // Proceed with create anyway if check fails
+                    that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                }
+            });
+        },
+        
+        /**
+         * Get readable status text from status code
+         * @param {string} sStatus Status code
+         * @returns {string} Status text
+         * @private
+         */
+        _getStatusText: function(sStatus) {
+            switch (sStatus) {
+                case "1": return "Created";
+                case "2": return "In Review";
+                case "3": return "Reviewed";
+                case "4": return "Approved";
+                case "5": return "Rejected";
+                case "6": return "Deleted";
+                default: return "Unknown";
+            }
+        },
+        
+        /**
+         * Format date to Month Year string
+         * @param {Date} dDate Date to format
+         * @returns {string} Formatted string (e.g., "January 2026")
+         * @private
+         */
+        _formatMonthYear: function(dDate) {
+            var aMonths = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"];
+            return aMonths[dDate.getMonth()] + " " + dDate.getFullYear();
         },
         
         /**
@@ -294,7 +417,8 @@ sap.ui.define([
                 emphasizedAction: MessageBox.Action.OK,
                 onClose: (sAction) => {
                     if (sAction === MessageBox.Action.OK) {
-                        this.getOwnerComponent().getRouter().navTo("home");
+                        // Use replace:true to clear navigation history and avoid looping
+                        this.getOwnerComponent().getRouter().navTo("home", {}, true);
                     }
                 }
             });
@@ -414,7 +538,7 @@ sap.ui.define([
                 this.getModel().read(sParameterizedPath, {
                     success: function(oCostData) {
                         console.log("Parameterized entity returned " + oCostData.results.length + " records");
-                        
+
                         // Set data to JSON model
                         that._oCostDetailModel.setData({ items: oCostData.results });
                         

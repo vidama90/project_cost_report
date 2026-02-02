@@ -237,9 +237,10 @@ sap.ui.define([
         
         /**
          * Handles navigation back to selection screen
+         * Uses replace:true to clear navigation history and avoid looping
          */
         onNavBack: function() {
-            this.getOwnerComponent().getRouter().navTo("home");
+            this.getOwnerComponent().getRouter().navTo("home", {}, true);
         },
         
         /**
