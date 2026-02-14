@@ -216,6 +216,7 @@ sap.ui.define([
         /**
          * Check if the previous month's report is in approved status (=4)
          * If not approved, show a warning but allow user to proceed
+         * Skip warning if this is the first-ever report for the project
          * @param {string} sProjectId Project External ID
          * @param {Date} dReportMonth Current Reporting Month
          * @param {Date} dCutOffDate Cut Off Date
@@ -223,6 +224,46 @@ sap.ui.define([
          * @private
          */
         _checkPreviousMonthApprovalStatus: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested) {
+            var that = this;
+            
+            // First, check if ANY reports exist for this project (to determine if this is the first-ever report)
+            // Using $count for efficiency - only returns the count, not all data
+            var aProjectFilters = [
+                new Filter("ProjectExternalID", FilterOperator.EQ, sProjectId),
+                new Filter("ReportStatus", FilterOperator.NE, 6) // Not deleted
+            ];
+            
+            this.getModel().read("/ProjectCostRept/$count", {
+                filters: aProjectFilters,
+                success: function(iCount) {
+                    if (parseInt(iCount, 10) === 0) {
+                        // This is the first-ever report for this project - no need to check previous month
+                        BusyIndicator.hide();
+                        that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                        return;
+                    }
+                    
+                    // Reports exist for this project - check if previous month's report is approved
+                    that._checkPreviousMonthReport(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                },
+                error: function(oError) {
+                    BusyIndicator.hide();
+                    console.error("Error checking for existing project reports:", oError);
+                    // Proceed with create anyway if check fails
+                    that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
+                }
+            });
+        },
+        
+        /**
+         * Check the previous month's report status when reports already exist for the project
+         * @param {string} sProjectId Project External ID
+         * @param {Date} dReportMonth Current Reporting Month
+         * @param {Date} dCutOffDate Cut Off Date
+         * @param {string} sIsLineItemsRequested Line Items requested flag (SAP format)
+         * @private
+         */
+        _checkPreviousMonthReport: function(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested) {
             var that = this;
             
             // Calculate previous month's date
@@ -273,7 +314,7 @@ sap.ui.define([
                             that._proceedWithCreateInitialization(sProjectId, dReportMonth, dCutOffDate, sIsLineItemsRequested);
                         }
                     } else {
-                        // No previous month's report exists - show warning
+                        // No previous month's report exists but other reports do - show warning
                         var sPreviousMonthFormatted = that._formatMonthYear(dPreviousMonth);
                         
                         MessageBox.warning(
